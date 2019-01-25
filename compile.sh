@@ -1,0 +1,1 @@
+lcc -o GameboyGame.gb Game.c
