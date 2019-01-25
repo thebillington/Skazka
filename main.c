@@ -2,6 +2,7 @@
 
 // Include all of the sprites
 #include "assets/ball.c"
+#include "assets/mushroom.c"
 
 // Prototypes
 void playerMovement();
@@ -11,19 +12,19 @@ void loadSprites();
 // Set the base location of the tile map
 unsigned char memoryCounter = 0x1A;
 
-// Store the location of the main sprite
-int x = 0;
-
 // Set the fps
 int FPS = 16;
 
 // Store the location of each sprite
 int ballLocation = 0;
 
+// Store the number of sprites
+const int spriteCount = 2;
+
 // Create data structure to hold the sprite data
-int spriteLocations[1] = {0};
-int spriteX[1] = {75};
-int spriteY[1] = {75};
+int spriteLocations[2] = {0, 1};
+int spriteX[2] = {75, 60};
+int spriteY[2] = {75, 60};
 
 void main() {
 
@@ -51,7 +52,7 @@ void main() {
 // Create a function to handle player movement
 void playerMovement() {
 
-        // Check for button presses
+        // Check for button presses and move the player
         if (joypad() & J_RIGHT) {
             spriteX[ballLocation]++;
             if (spriteX[ballLocation] > 160) {
@@ -83,7 +84,7 @@ void drawSprites() {
 
     // Look at each sprite
     int i;
-    for (i = 0; i < sizeof(spriteLocations)/sizeof(spriteLocations[0]); i++) {
+    for (i = 0; i < spriteCount; i++) {
 
         // Render the sprite (move it to the correct location to be rendered)
         move_sprite(spriteLocations[i], spriteX[i], spriteY[i]);
@@ -98,7 +99,13 @@ void loadSprites() {
     // Create a new sprite to hold the tile map
     SPRITES_8x8;
     set_sprite_data(memoryCounter, ballLen, ball);
-    set_sprite_tile(0, memoryCounter);
+    set_sprite_tile(ballLocation, memoryCounter);
+    memoryCounter++;
+
+    // Create a new sprite to hold the tile map
+    SPRITES_8x8;
+    set_sprite_data(memoryCounter, mushroomLen, mushroom);
+    set_sprite_tile(1, memoryCounter);
     memoryCounter++;
 
 }
