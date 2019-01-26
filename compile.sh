@@ -1,1 +1,1 @@
-lcc -o GameboyGame.gb Game.c
+lcc -o main.gb main.c
