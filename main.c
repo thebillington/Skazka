@@ -9,7 +9,10 @@
 #include "assets/crack2.c"
 #include "assets/crackTile.c"
 
+#include "assets/square.c"
+
 // Prototypes
+void drawSprites2x2();
 void playerMovement();
 void drawSprites();
 void loadSprites();
@@ -30,6 +33,8 @@ UINT8 FPS = 16; //60 FPS
 
 // Store the location of each sprite
 UINT8 ballLocation = 0;
+UINT8 mushroomLocation = 1;
+UINT8 squareLocation[4] = {2, 3, 4, 5};
 
 // Store the number of sprites
 const UINT8 spriteCount = 2;
@@ -41,6 +46,10 @@ UINT8 spriteY[2] = {75, 60};
 
 // Store the speed of the player (allows for a grid based instead of pixel based movement if set to 8)
 UINT8 playerSpeed = 1;
+
+// Global iterator
+UINT8 i;
+UINT8 j;
 
 // Store the current background
 UINT8 currentBG = 0;
@@ -73,6 +82,7 @@ void main() {
 
         // Draw each sprite to the correct location
         drawSprites();
+        drawSprites2x2();
 
         // Render the sprites
         SHOW_SPRITES;
@@ -81,6 +91,16 @@ void main() {
         delay(FPS);
     }
 
+}
+
+// Procedure to handle drawing 2x2 tile sprites
+void drawSprites2x2() {
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 2; j++) {
+            move_sprite(squareLocation[(i * 2) + j], 100 + (i * 8), 100 + (j * 8));
+            move_sprite(squareLocation[(i * 2) + j] + 0x4, 100 + (i * 8), 84 + (j * 8));
+        }
+    }
 }
 
 // Procedure to handle player movement based on button presses (J_PAD)
@@ -121,7 +141,6 @@ void playerMovement() {
 void drawSprites() {
 
     // Look at each sprite
-    UINT8 i;
     for (i = 0; i < spriteCount; i++) {
 
         // Render the sprite (move it to the correct location to be rendered)
@@ -143,7 +162,7 @@ void loadSprites() {
     // Create a new sprite to hold the mushroom tile map
     SPRITES_8x8;
     set_sprite_data(memoryCounter, mushroomLen, mushroom);
-    set_sprite_tile(1, memoryCounter);
+    set_sprite_tile(mushroomLocation, memoryCounter);
     memoryCounter+=mushroomLen;
 
 }
@@ -179,6 +198,31 @@ void loadBackgrounds() {
     DISPLAY_ON;
     set_bkg_data(backgroundCounter, crackTileLen, crackTile);
     backgroundCounter+=crackTileLen;
+
+    SPRITES_8x8;
+    set_sprite_data(memoryCounter, SquareTileLen, SquareTile);
+
+    for (i = 0; i < 4; i++) {
+        set_sprite_tile(squareLocation[i], memoryCounter);
+        // memoryCounter++;
+    }
+
+    for (i = 0; i < 4; i++) {
+        set_sprite_tile(squareLocation[i] + 0x4, memoryCounter);
+        // memoryCounter++;
+    }
+
+    // for (i = 0; i < SquareTileLen; i++) {
+    //     set_sprite_tile(squareLocation[i], memoryCounter);
+    //     memoryCounter++;
+    // }
+
+    // SPRITES_8x8;
+
+    // for (i = 0; i < SquareTileLen; i++) {
+    //     set_sprite_tile(squareLocation[i] + 0x4, memoryCounter - 0x4);
+    //     memoryCounter++;
+    // }
 
 }
 
