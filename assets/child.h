@@ -1,6 +1,6 @@
 /*
 
- BABAYAGA.H
+ child.H
 
  Include File.
 
@@ -24,9 +24,9 @@
 
 
 /* Bank of tiles. */
-#define babayagaTilesBank 0
+#define childTilesBank 0
 /* Start of tile array. */
-extern unsigned char babayagaTiles[];
-#define babayagaTilesLen 4
+extern unsigned char childTiles[];
+#define childTilesLen 4
 
-/* End of BABAYAGA.H */
+/* End of child.H */

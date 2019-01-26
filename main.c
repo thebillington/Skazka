@@ -8,7 +8,7 @@
 #include "assets/bridge.c"
 #include "assets/crack2.c"
 #include "assets/crackTile.c"
-#include "assets/babayaga.c"
+#include "assets/child.c"
 
 // Prototypes
 void drawSprites2x2();
@@ -33,7 +33,7 @@ UINT8 FPS = 16; //60 FPS
 // Store the location of each sprite
 UINT8 ballLocation = 0;
 UINT8 mushroomLocation[3] = {1, 2, 3};
-UINT8 babayagaLocation[4] = {4, 5, 6, 7};
+UINT8 childLocation[4] = {4, 5, 6, 7};
 
 // Store the number of sprites
 const UINT8 spriteCount = 2;
@@ -99,7 +99,7 @@ void main() {
 void drawSprites2x2() {
     for (i = 0; i < 2; i++) {
         for (j = 0; j < 2; j++) {
-            move_sprite(babayagaLocation[(i * 2) + j], playerData[1] + (j * 8), playerData[2] + (i * 8));
+            move_sprite(childLocation[(i * 2) + j], playerData[1] + (j * 8), playerData[2] + (i * 8));
         }
     }
 }
@@ -167,10 +167,10 @@ void loadSprites() {
 
     // Load the child
     SPRITES_8x8;
-    set_sprite_data(memoryCounter, babayagaTilesLen, babayagaTiles);
+    set_sprite_data(memoryCounter, childTilesLen, childTiles);
 
-    for (i = 0; i < babayagaTilesLen; i++) {
-        set_sprite_tile(babayagaLocation[i], memoryCounter);
+    for (i = 0; i < childTilesLen; i++) {
+        set_sprite_tile(childLocation[i], memoryCounter);
         memoryCounter++;
     }
 
