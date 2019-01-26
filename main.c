@@ -13,6 +13,7 @@
 #include "assets/BabaYagaRight.c"
 
 // Prototypes
+void loadBabayaga();
 void babayagaMovement();
 void playerMovement();
 void drawSprites();
@@ -51,11 +52,13 @@ UINT8 wispsY[3] = {60, 75, 90};
 // Store BabaYaga data
 UINT8 babayagaX = 152;
 UINT8 babayagaY = 40;
-UINT8 babayagaDirection = 0;
+UINT8 babayagaDirection = 1;
 
 // Store the speed of the player (allows for a grid based instead of pixel based movement if set to 8)
 UINT8 playerSpeed = 1;
 UINT8 babayagaSpeed = 1;
+
+UINT8 babayagaMem;
 
 // Global iterator
 UINT8 i;
@@ -106,19 +109,28 @@ void main() {
 
 }
 
+void loadBabayaga() {
+    for (i = 0; i < BabaYagaLeftTilesLen; i++) {
+        set_sprite_tile(babayagaLocation[i], (babayagaDirection * 8) + babayagaMem + i);
+        // memoryCounter++;
+    }
+}
+
 void babayagaMovement() {
     if (babayagaDirection) {
-        babayagaX -= babayagaSpeed;
-    } else {
         babayagaX += babayagaSpeed;
+    } else {
+        babayagaX -= babayagaSpeed;
     }
     
     if (babayagaX > 152) {
         babayagaX = 152;
-        babayagaDirection = 1; 
+        babayagaDirection = 0; 
+        loadBabayaga();
     } else if (babayagaX < 8) {
         babayagaX = 8;
-        babayagaDirection = 0; 
+        babayagaDirection = 1;
+        loadBabayaga();
     }
 }
 
@@ -204,12 +216,13 @@ void loadSprites() {
 
     // Load BabaYaga
     SPRITES_8x8;
+    babayagaMem = memoryCounter;
     set_sprite_data(memoryCounter, BabaYagaLeftTilesLen, BabaYagaLeftTiles);
+    memoryCounter += BabaYagaLeftTilesLen;
+    set_sprite_data(memoryCounter, BabaYagaRightTilesLen, BabaYagaRightTiles);
+    memoryCounter += BabaYagaRightTilesLen;
 
-    for (i = 0; i < BabaYagaLeftTilesLen + BabaYagaRightTilesLen; i++) {
-        set_sprite_tile(babayagaLocation[i], memoryCounter);
-        memoryCounter++;
-    }
+    loadBabayaga();
 }
 
 // Procedure to draw the background 
