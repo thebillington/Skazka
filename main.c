@@ -2,6 +2,8 @@
 #include <rand.h>
 #include <stdio.h>
 
+#include "dialogue.c"
+
 // Include all of the sprites
 #include "assets/ball.c"
 #include "assets/mushroom.c"
@@ -38,6 +40,12 @@ UINT8 playerSpeed = 1;
 
 void main() {
 
+	DISPLAY_ON;
+
+	SHOW_BKG;
+
+	initWin();
+
     // Load the sprites
     loadSprites();
 
@@ -55,11 +63,8 @@ void main() {
             UINT8 yRand = abs((UINT8)rand());
             spriteX[1] = 8 + (xRand % 152);
             spriteY[1] = 16 + (yRand % 136);
-            log("X Rand:",xRand);
-            log("Y Rand:",yRand);
-            log("X loc:",spriteX[1]);
-            log("Y Loc:",spriteY[1]);
 
+			displayMessage(0, 6);
         }
 
         // Draw each sprite to the correct location
