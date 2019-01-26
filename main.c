@@ -6,12 +6,14 @@
 #include "assets/ball.c"
 #include "assets/mushroom.c"
 #include "assets/crack.c"
+#include "assets/crack2.c"
 #include "assets/crackTile.c"
 
 // Prototypes
 void playerMovement();
 void drawSprites();
 void loadSprites();
+void drawBackground();
 void loadBackgrounds();
 UINT8 rectCollision(INT8 x1, INT8 y1, INT8 w1, INT8 h1, INT8 x2, INT8 y2, INT8 w2, INT8 h2);
 UINT8 abs(INT8 x);
@@ -40,11 +42,17 @@ UINT8 spriteY[2] = {75, 60};
 // Store the speed of the player (allows for a grid based instead of pixel based movement if set to 8)
 UINT8 playerSpeed = 1;
 
+// Store the current background
+UINT8 currentBG = 0;
+
 void main() {
 
     // Load the sprites
     loadSprites();
     loadBackgrounds();
+
+    // Draw the default background
+    drawBackground();
 
     // Game loop
     while(1) {
@@ -60,10 +68,6 @@ void main() {
             UINT8 yRand = abs((UINT8)rand());
             spriteX[1] = 8 + (xRand % 152);
             spriteY[1] = 16 + (yRand % 136);
-            log("X Rand:",xRand);
-            log("Y Rand:",yRand);
-            log("X loc:",spriteX[1]);
-            log("Y Loc:",spriteY[1]);
 
         }
 
@@ -107,6 +111,10 @@ void playerMovement() {
                 spriteY[ballLocation] = 152;
             }
         }
+        if (joypad() & J_B) {
+            currentBG = 1 - currentBG;
+            drawBackground();
+        }
 }
 
 // Procedure to render each sprite
@@ -140,14 +148,36 @@ void loadSprites() {
 
 }
 
+// Procedure to draw the background 
+void drawBackground() {
+
+    // Hide the background
+    HIDE_BKG;
+
+    // Check the background we want to show
+    if (currentBG) {
+
+        // Set the correct background data
+        set_bkg_tiles(backgroundCounter, 0x00, crackWidth, crackHeight, crack);
+
+    }
+    else {
+
+        // Set the correct background data
+        set_bkg_tiles(backgroundCounter, 0x00, crackWidth, crackHeight, crack2);
+    }
+        
+    // Render the background
+    SHOW_BKG;
+
+}
+
 // Procedure to load the backgrounds
 void loadBackgrounds() {
 
     // Create the cracked background
     DISPLAY_ON;
     set_bkg_data(backgroundCounter, crackTileLen, crackTile);
-    set_bkg_tiles(backgroundCounter, 0x00, crackWidth, crackHeight, crack);
-    SHOW_BKG;
     backgroundCounter+=crackTileLen;
 
 }
