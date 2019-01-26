@@ -9,9 +9,11 @@
 #include "assets/crack2.c"
 #include "assets/crackTile.c"
 #include "assets/child.c"
+#include "assets/BabaYagaLeft.c"
+#include "assets/BabaYagaRight.c"
 
 // Prototypes
-void drawSprites2x2();
+void babayagaMovement();
 void playerMovement();
 void drawSprites();
 void loadSprites();
@@ -34,6 +36,7 @@ UINT8 FPS = 16; //60 FPS
 UINT8 ballLocation = 0;
 UINT8 mushroomLocation[3] = {1, 2, 3};
 UINT8 childLocation[4] = {4, 5, 6, 7};
+UINT8 babayagaLocation[8] = {12, 13, 14, 15, 16, 17, 18, 19};
 
 // Store the number of sprites
 const UINT8 spriteCount = 2;
@@ -45,8 +48,14 @@ UINT8 playerData[3] = {0, 8, 88};
 UINT8 wispsX[3] = {60, 75, 90};
 UINT8 wispsY[3] = {60, 75, 90};
 
+// Store BabaYaga data
+UINT8 babayagaX = 152;
+UINT8 babayagaY = 40;
+UINT8 babayagaDirection = 0;
+
 // Store the speed of the player (allows for a grid based instead of pixel based movement if set to 8)
 UINT8 playerSpeed = 1;
+UINT8 babayagaSpeed = 1;
 
 // Global iterator
 UINT8 i;
@@ -69,6 +78,8 @@ void main() {
 
         // Call player movement
         playerMovement();
+
+        babayagaMovement();
 
         // Check for a collision between the player and the wisps
         for (i = 0; i < 3; i++) {
@@ -95,12 +106,19 @@ void main() {
 
 }
 
-// Procedure to handle drawing 2x2 tile sprites
-void drawSprites2x2() {
-    for (i = 0; i < 2; i++) {
-        for (j = 0; j < 2; j++) {
-            move_sprite(childLocation[(i * 2) + j], playerData[1] + (j * 8), playerData[2] + (i * 8));
-        }
+void babayagaMovement() {
+    if (babayagaDirection) {
+        babayagaX -= babayagaSpeed;
+    } else {
+        babayagaX += babayagaSpeed;
+    }
+    
+    if (babayagaX > 152) {
+        babayagaX = 152;
+        babayagaDirection = 1; 
+    } else if (babayagaX < 8) {
+        babayagaX = 8;
+        babayagaDirection = 0; 
     }
 }
 
@@ -150,8 +168,18 @@ void drawSprites() {
     }
 
     // Draw the 2x2 sprites
-    drawSprites2x2();
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 2; j++) {
+            move_sprite(childLocation[(i * 2) + j], playerData[1] + (j * 8), playerData[2] + (i * 8));
+        }
+    }
 
+    // Draw the 4x4 sprites
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 2; j++) {
+            move_sprite(babayagaLocation[(i * 2) + j], babayagaX + (j * 8), babayagaY + (i * 8));
+        }
+    }
 }
 
 // Procedure to load sprites
@@ -174,6 +202,14 @@ void loadSprites() {
         memoryCounter++;
     }
 
+    // Load BabaYaga
+    SPRITES_8x8;
+    set_sprite_data(memoryCounter, BabaYagaLeftTilesLen, BabaYagaLeftTiles);
+
+    for (i = 0; i < BabaYagaLeftTilesLen + BabaYagaRightTilesLen; i++) {
+        set_sprite_tile(babayagaLocation[i], memoryCounter);
+        memoryCounter++;
+    }
 }
 
 // Procedure to draw the background 
@@ -197,7 +233,7 @@ void drawBackground() {
     // }
         
     // Render the background
-    SHOW_BKG;
+    //SHOW_BKG;
 
 }
 
