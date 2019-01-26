@@ -5,7 +5,7 @@
 // Include all of the sprites
 #include "assets/ball.c"
 #include "assets/mushroom.c"
-#include "assets/crack.c"
+#include "assets/bridge.c"
 #include "assets/crack2.c"
 #include "assets/crackTile.c"
 #include "assets/babayaga.c"
@@ -183,17 +183,18 @@ void drawBackground() {
     HIDE_BKG;
 
     // Check the background we want to show
-    if (currentBG) {
+    // if (currentBG) {
+
+    //     // Set the correct background data
+    //     set_bkg_tiles(backgroundCounter, 0x00, crackWidth, crackHeight, crack);
+
+    // }
+    // else {
 
         // Set the correct background data
-        set_bkg_tiles(backgroundCounter, 0x00, crackWidth, crackHeight, crack);
+        set_bkg_tiles(0x00, 0x00, bridge_tile_map_width, bridge_tile_map_height, bridge_map_data);
 
-    }
-    else {
-
-        // Set the correct background data
-        set_bkg_tiles(backgroundCounter, 0x00, crackWidth, crackHeight, crack2);
-    }
+    // }
         
     // Render the background
     SHOW_BKG;
@@ -203,10 +204,9 @@ void drawBackground() {
 // Procedure to load the backgrounds
 void loadBackgrounds() {
 
-    // Create the cracked background
+    // Create the bridge background
     DISPLAY_ON;
-    set_bkg_data(backgroundCounter, crackTileLen, crackTile);
-    backgroundCounter+=crackTileLen;
+    set_bkg_data(backgroundCounter, bridge_tile_data_size, bridge_tile_data);
 
 }
 
