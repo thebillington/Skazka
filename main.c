@@ -18,6 +18,7 @@ void drawSprites();
 void loadSprites();
 void drawBackground();
 void loadBackgrounds();
+void moveWisps(UINT8 x, UINT8 y);
 UINT8 rectCollision(INT8 x1, INT8 y1, INT8 w1, INT8 h1, INT8 x2, INT8 y2, INT8 w2, INT8 h2);
 UINT8 abs(INT8 x);
 void log(char* m, UINT8 data);
@@ -27,9 +28,9 @@ unsigned char memoryCounter = 0x1A;
 unsigned char backgroundCounter = 0x00;
 
 // Set the fps
-UINT8 FPS = 16; //60 FPS
-// UINT8 FPS = 32; // 30 FPS
-// UINT8 FPS = 64; // 15 FPS
+UINT8 FPS = 16; // 60 FPS
+//UINT8 FPS = 41; // 24 FPS
+//UINT8 FPS = 64; // 15 FPS
 
 // Store the location of each sprite
 UINT8 ballLocation = 0;
@@ -41,7 +42,7 @@ UINT8 babayagaLocation[8] = {12, 13, 14, 15, 16, 17, 18, 19};
 const UINT8 spriteCount = 2;
 
 // Store the player data
-UINT8 playerData[3] = {0, 8, 88};
+UINT8 playerData[3] = {0, 5, 88};
 
 // Create data structure to hold the sprite data
 UINT8 wispsX[3] = {60, 75, 90};
@@ -61,6 +62,14 @@ UINT8 babayagaMem;
 // Global iterator
 UINT8 i;
 UINT8 j;
+
+// Store the horizontal and vertical screen scroll
+UINT8 xScroll = 5;
+UINT8 yScroll = 16;
+
+// Store the max scroll allowed of the screen
+const UINT8 xScrollMax = 12 * 8;
+const UINT8 yScrollMax = 14 * 8;
 
 // Store the current state
 UINT8 state = 1;
@@ -135,31 +144,70 @@ void babayagaMovement() {
 // Procedure to handle player movement based on button presses (J_PAD)
 void playerMovement() {
 
-        // Check for button presses and move the player
-        if (joypad() & J_RIGHT) {
-            playerData[1] += playerSpeed;
-            if (playerData[1] > 160) {
-                playerData[1] = 160;
+    // Check for button presses and move the player
+    if (joypad() & J_RIGHT) {
+        playerData[1] += playerSpeed;
+        if (playerData[1] > 155) {
+            // Check whether the screen should scroll
+            if (xScroll < xScrollMax) {
+                babayagaX-=playerSpeed;
+                moveWisps(-playerSpeed,0);
+                scroll_bkg(playerSpeed,0);
+                xScroll++;
             }
+            playerData[1] = 155;
         }
-        if (joypad() & J_LEFT) {
-            playerData[1] -= playerSpeed;
-            if (playerData[1] < 8) {
-                playerData[1] = 8;
+    }
+    if (joypad() & J_LEFT) {
+        playerData[1] -= playerSpeed;
+        if (playerData[1] < 5) {
+            // Check whether the screen should scroll
+            if (xScroll > 5) {
+                babayagaX+=playerSpeed;
+                moveWisps(playerSpeed, 0);
+                scroll_bkg(-playerSpeed,0);
+                xScroll--;
             }
+            playerData[1] = 5;
         }
-        if (joypad() & J_UP) {
-            playerData[2] -= playerSpeed;
-            if (playerData[2] < 16) {
-                playerData[2] = 16;
+    }
+    if (joypad() & J_UP) {
+        playerData[2] -= playerSpeed;
+        if (playerData[2] < 16) {
+            // Check whether the screen should scroll
+            if (yScroll > 16) {
+                babayagaY+=playerSpeed;
+                moveWisps(0, playerSpeed);
+                scroll_bkg(0,-playerSpeed);
+                yScroll--;
             }
+            playerData[2] = 16;
         }
-        if (joypad() & J_DOWN) {
-            playerData[2] += playerSpeed;
-            if (playerData[2] > 152) {
-                playerData[2] = 152;
+    }
+    if (joypad() & J_DOWN) {
+        playerData[2] += playerSpeed;
+        if (playerData[2] > 144) {
+            // Check whether the screen should scroll
+            if (yScroll < yScrollMax) {
+                babayagaY-=playerSpeed;
+                moveWisps(0, -playerSpeed);
+                scroll_bkg(0,playerSpeed);
+                yScroll++;
             }
+            playerData[2] = 144;
         }
+    }
+}
+
+// Procedure to move all of the wisps
+void moveWisps(UINT8 x, UINT8 y) {
+
+    // Iterate over the wisp data and move them all
+    for (i = 0; i < 3; i++) {
+        wispsX[i] += x;
+        wispsY[i] += y;
+    }
+
 }
 
 // Procedure to render each sprite
