@@ -5,22 +5,26 @@
 // Include all of the sprites
 #include "assets/ball.c"
 #include "assets/mushroom.c"
+#include "assets/crack.c"
+#include "assets/crackTile.c"
 
 // Prototypes
 void playerMovement();
 void drawSprites();
 void loadSprites();
+void loadBackgrounds();
 UINT8 rectCollision(INT8 x1, INT8 y1, INT8 w1, INT8 h1, INT8 x2, INT8 y2, INT8 w2, INT8 h2);
 UINT8 abs(INT8 x);
 void log(char* m, UINT8 data);
 
-// Set the base location of the tile map
+// Set the base location of the sprites and backgrounds
 unsigned char memoryCounter = 0x1A;
+unsigned char backgroundCounter = 0x00;
 
 // Set the fps
 UINT8 FPS = 16; //60 FPS
 // UINT8 FPS = 32; // 30 FPS
-//UINT8 FPS = 64; // 15 FPS
+// UINT8 FPS = 64; // 15 FPS
 
 // Store the location of each sprite
 UINT8 ballLocation = 0;
@@ -40,6 +44,7 @@ void main() {
 
     // Load the sprites
     loadSprites();
+    loadBackgrounds();
 
     // Game loop
     while(1) {
@@ -121,17 +126,29 @@ void drawSprites() {
 // Procedure to load sprites
 void loadSprites() {
 
-    // Create a new sprite to hold the tile map
+    // Create a new sprite to hold the ball tile map
     SPRITES_8x8;
     set_sprite_data(memoryCounter, ballLen, ball);
     set_sprite_tile(ballLocation, memoryCounter);
-    memoryCounter++;
+    memoryCounter+=ballLen;
 
-    // Create a new sprite to hold the tile map
+    // Create a new sprite to hold the mushroom tile map
     SPRITES_8x8;
     set_sprite_data(memoryCounter, mushroomLen, mushroom);
     set_sprite_tile(1, memoryCounter);
-    memoryCounter++;
+    memoryCounter+=mushroomLen;
+
+}
+
+// Procedure to load the backgrounds
+void loadBackgrounds() {
+
+    // Create the cracked background
+    DISPLAY_ON;
+    set_bkg_data(backgroundCounter, crackTileLen, crackTile);
+    set_bkg_tiles(backgroundCounter, 0x00, crackWidth, crackHeight, crack);
+    SHOW_BKG;
+    backgroundCounter+=crackTileLen;
 
 }
 
