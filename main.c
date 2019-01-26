@@ -6,7 +6,10 @@
 #include "assets/ball.c"
 #include "assets/mushroom.c"
 
+#include "assets/square.c"
+
 // Prototypes
+void drawSprites2x2();
 void playerMovement();
 void drawSprites();
 void loadSprites();
@@ -24,6 +27,8 @@ UINT8 FPS = 16; //60 FPS
 
 // Store the location of each sprite
 UINT8 ballLocation = 0;
+UINT8 mushroomLocation = 1;
+UINT8 squareLocation[4] = {2, 3, 4, 5};
 
 // Store the number of sprites
 const UINT8 spriteCount = 2;
@@ -35,6 +40,10 @@ UINT8 spriteY[2] = {75, 60};
 
 // Store the speed of the player (allows for a grid based instead of pixel based movement if set to 8)
 UINT8 playerSpeed = 1;
+
+// Global iterator
+UINT8 i;
+UINT8 j;
 
 void main() {
 
@@ -55,15 +64,16 @@ void main() {
             UINT8 yRand = abs((UINT8)rand());
             spriteX[1] = 8 + (xRand % 152);
             spriteY[1] = 16 + (yRand % 136);
-            log("X Rand:",xRand);
-            log("Y Rand:",yRand);
-            log("X loc:",spriteX[1]);
-            log("Y Loc:",spriteY[1]);
+            // log("X Rand:",xRand);
+            // log("Y Rand:",yRand);
+            // log("X loc:",spriteX[1]);
+            // log("Y Loc:",spriteY[1]);
 
         }
 
         // Draw each sprite to the correct location
         drawSprites();
+        drawSprites2x2();
 
         // Render the sprites
         SHOW_SPRITES;
@@ -72,6 +82,15 @@ void main() {
         delay(FPS);
     }
 
+}
+
+// Procedure to handle drawing 2x2 tile sprites
+void drawSprites2x2() {
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 2; j++) {
+            move_sprite(squareLocation[(i * 2) + j], 80 + (i * 8), 80 + (j * 8));
+        }
+    }
 }
 
 // Procedure to handle player movement based on button presses (J_PAD)
@@ -108,7 +127,6 @@ void playerMovement() {
 void drawSprites() {
 
     // Look at each sprite
-    UINT8 i;
     for (i = 0; i < spriteCount; i++) {
 
         // Render the sprite (move it to the correct location to be rendered)
@@ -130,8 +148,16 @@ void loadSprites() {
     // Create a new sprite to hold the tile map
     SPRITES_8x8;
     set_sprite_data(memoryCounter, mushroomLen, mushroom);
-    set_sprite_tile(1, memoryCounter);
+    set_sprite_tile(mushroomLocation, memoryCounter);
     memoryCounter++;
+
+    SPRITES_8x8;
+    set_sprite_data(memoryCounter, SquareTileLen, SquareTile);
+
+    for (i = 0; i < SquareTileLen; i++) {
+        set_sprite_tile(squareLocation[i], memoryCounter);
+        memoryCounter++;
+    }
 
 }
 
