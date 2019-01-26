@@ -8,8 +8,7 @@
 #include "assets/crack.c"
 #include "assets/crack2.c"
 #include "assets/crackTile.c"
-
-#include "assets/square.c"
+#include "assets/babayaga.c"
 
 // Prototypes
 void drawSprites2x2();
@@ -33,16 +32,18 @@ UINT8 FPS = 16; //60 FPS
 
 // Store the location of each sprite
 UINT8 ballLocation = 0;
-UINT8 mushroomLocation = 1;
-UINT8 squareLocation[4] = {2, 3, 4, 5};
+UINT8 mushroomLocation[3] = {1, 2, 3};
+UINT8 babayagaLocation[4] = {4, 5, 6, 7};
 
 // Store the number of sprites
 const UINT8 spriteCount = 2;
 
+// Store the player data
+UINT8 playerData[3] = {0, 8, 88};
+
 // Create data structure to hold the sprite data
-UINT8 spriteLocations[2] = {0, 1};
-UINT8 spriteX[2] = {75, 60};
-UINT8 spriteY[2] = {75, 60};
+UINT8 wispsX[3] = {60, 75, 90};
+UINT8 wispsY[3] = {60, 75, 90};
 
 // Store the speed of the player (allows for a grid based instead of pixel based movement if set to 8)
 UINT8 playerSpeed = 1;
@@ -69,20 +70,21 @@ void main() {
         // Call player movement
         playerMovement();
 
-        // Check for a collision between the two sprites
-        if (rectCollision(spriteX[0],spriteY[0],8,8,spriteX[1],spriteY[1],8,8)) {
+        // Check for a collision between the player and the wisps
+        for (i = 0; i < 3; i++) {
+            if (rectCollision(playerData[1],playerData[2],8,8,wispsX[i],wispsY[i],8,8)) {
 
-            // Move the mushroom
-            UINT8 xRand = abs((UINT8)rand());
-            UINT8 yRand = abs((UINT8)rand());
-            spriteX[1] = 8 + (xRand % 152);
-            spriteY[1] = 16 + (yRand % 136);
+                // Move the mushroom
+                UINT8 xRand = abs((UINT8)rand());
+                UINT8 yRand = abs((UINT8)rand());
+                wispsX[i] = 8 + (xRand % 152);
+                wispsY[i] = 16 + (yRand % 136);
 
+            }
         }
 
         // Draw each sprite to the correct location
         drawSprites();
-        drawSprites2x2();
 
         // Render the sprites
         SHOW_SPRITES;
@@ -97,8 +99,7 @@ void main() {
 void drawSprites2x2() {
     for (i = 0; i < 2; i++) {
         for (j = 0; j < 2; j++) {
-            move_sprite(squareLocation[(i * 2) + j], 100 + (i * 8), 100 + (j * 8));
-            move_sprite(squareLocation[(i * 2) + j] + 0x4, 100 + (i * 8), 84 + (j * 8));
+            move_sprite(babayagaLocation[(i * 2) + j], playerData[1] + (j * 8), playerData[2] + (i * 8));
         }
     }
 }
@@ -108,27 +109,27 @@ void playerMovement() {
 
         // Check for button presses and move the player
         if (joypad() & J_RIGHT) {
-            spriteX[ballLocation] += playerSpeed;
-            if (spriteX[ballLocation] > 160) {
-                spriteX[ballLocation] = 160;
+            playerData[1] += playerSpeed;
+            if (playerData[1] > 160) {
+                playerData[1] = 160;
             }
         }
         if (joypad() & J_LEFT) {
-            spriteX[ballLocation] -= playerSpeed;
-            if (spriteX[ballLocation] < 8) {
-                spriteX[ballLocation] = 8;
+            playerData[1] -= playerSpeed;
+            if (playerData[1] < 8) {
+                playerData[1] = 8;
             }
         }
         if (joypad() & J_UP) {
-            spriteY[ballLocation] -= playerSpeed;
-            if (spriteY[ballLocation] < 16) {
-                spriteY[ballLocation] = 16;
+            playerData[2] -= playerSpeed;
+            if (playerData[2] < 16) {
+                playerData[2] = 16;
             }
         }
         if (joypad() & J_DOWN) {
-            spriteY[ballLocation] += playerSpeed;
-            if (spriteY[ballLocation] > 152) {
-                spriteY[ballLocation] = 152;
+            playerData[2] += playerSpeed;
+            if (playerData[2] > 152) {
+                playerData[2] = 152;
             }
         }
         if (joypad() & J_B) {
@@ -141,29 +142,37 @@ void playerMovement() {
 void drawSprites() {
 
     // Look at each sprite
-    for (i = 0; i < spriteCount; i++) {
+    for (i = 0; i < 3; i++) {
 
         // Render the sprite (move it to the correct location to be rendered)
-        move_sprite(spriteLocations[i], spriteX[i], spriteY[i]);
+        move_sprite(mushroomLocation[i], wispsX[i], wispsY[i]);
 
     }
+
+    // Draw the 2x2 sprites
+    drawSprites2x2();
 
 }
 
 // Procedure to load sprites
 void loadSprites() {
 
-    // Create a new sprite to hold the ball tile map
-    SPRITES_8x8;
-    set_sprite_data(memoryCounter, ballLen, ball);
-    set_sprite_tile(ballLocation, memoryCounter);
-    memoryCounter+=ballLen;
-
-    // Create a new sprite to hold the mushroom tile map
+    // Create all of the wisp sprites
     SPRITES_8x8;
     set_sprite_data(memoryCounter, mushroomLen, mushroom);
-    set_sprite_tile(mushroomLocation, memoryCounter);
+    for (i = 0; i < 3; i++) {
+        set_sprite_tile(mushroomLocation[i], memoryCounter);
+    }
     memoryCounter+=mushroomLen;
+
+    // Load the child
+    SPRITES_8x8;
+    set_sprite_data(memoryCounter, babayagaTilesLen, babayagaTiles);
+
+    for (i = 0; i < babayagaTilesLen; i++) {
+        set_sprite_tile(babayagaLocation[i], memoryCounter);
+        memoryCounter++;
+    }
 
 }
 
@@ -198,31 +207,6 @@ void loadBackgrounds() {
     DISPLAY_ON;
     set_bkg_data(backgroundCounter, crackTileLen, crackTile);
     backgroundCounter+=crackTileLen;
-
-    SPRITES_8x8;
-    set_sprite_data(memoryCounter, SquareTileLen, SquareTile);
-
-    for (i = 0; i < 4; i++) {
-        set_sprite_tile(squareLocation[i], memoryCounter);
-        // memoryCounter++;
-    }
-
-    for (i = 0; i < 4; i++) {
-        set_sprite_tile(squareLocation[i] + 0x4, memoryCounter);
-        // memoryCounter++;
-    }
-
-    // for (i = 0; i < SquareTileLen; i++) {
-    //     set_sprite_tile(squareLocation[i], memoryCounter);
-    //     memoryCounter++;
-    // }
-
-    // SPRITES_8x8;
-
-    // for (i = 0; i < SquareTileLen; i++) {
-    //     set_sprite_tile(squareLocation[i] + 0x4, memoryCounter - 0x4);
-    //     memoryCounter++;
-    // }
 
 }
 
