@@ -2,6 +2,8 @@
 #include <rand.h>
 #include <stdio.h>
 
+#include "dialogue.c"
+
 // Include all of the sprites
 #include "assets/mushroom.c"
 #include "assets/bridge.c"
@@ -76,6 +78,12 @@ UINT8 state = 1;
 
 void main() {
 
+	DISPLAY_ON;
+
+	SHOW_BKG;
+
+	initWin();
+
     // Load the sprites
     loadSprites();
     loadBackgrounds();
@@ -95,11 +103,13 @@ void main() {
         for (i = 0; i < 3; i++) {
             if (rectCollision(playerData[1],playerData[2],16,16,wispsX[i],wispsY[i],8,8)) {
 
-                // Move the mushroom
+                // Move the wisp
                 UINT8 xRand = abs((UINT8)rand());
                 UINT8 yRand = abs((UINT8)rand());
                 wispsX[i] = 8 + (xRand % 152);
                 wispsY[i] = 16 + (yRand % 136);
+
+                displayMessage(0, 6);
 
             }
         }
