@@ -3,12 +3,10 @@
 #include <stdio.h>
 
 // Include all of the sprites
-#include "assets/ball.c"
 #include "assets/mushroom.c"
 #include "assets/bridge.c"
-#include "assets/crack2.c"
-#include "assets/crackTile.c"
 #include "assets/child.c"
+#include "assets/world.c"
 
 // Prototypes
 void drawSprites2x2();
@@ -52,8 +50,8 @@ UINT8 playerSpeed = 1;
 UINT8 i;
 UINT8 j;
 
-// Store the current background
-UINT8 currentBG = 0;
+// Store the current state
+UINT8 state = 1;
 
 void main() {
 
@@ -132,10 +130,6 @@ void playerMovement() {
                 playerData[2] = 152;
             }
         }
-        if (joypad() & J_B) {
-            currentBG = 1 - currentBG;
-            drawBackground();
-        }
 }
 
 // Procedure to render each sprite
@@ -183,18 +177,12 @@ void drawBackground() {
     HIDE_BKG;
 
     // Check the background we want to show
-    // if (currentBG) {
+    if (state == 1) {
 
-    //     // Set the correct background data
-    //     set_bkg_tiles(backgroundCounter, 0x00, crackWidth, crackHeight, crack);
+        // Set the background to the world map
+        set_bkg_tiles(0x00, 0x00, world_data_width, world_data_height, world_data);
 
-    // }
-    // else {
-
-        // Set the correct background data
-        set_bkg_tiles(0x00, 0x00, bridge_tile_map_width, bridge_tile_map_height, bridge_map_data);
-
-    // }
+    }
         
     // Render the background
     SHOW_BKG;
@@ -206,7 +194,7 @@ void loadBackgrounds() {
 
     // Create the bridge background
     DISPLAY_ON;
-    set_bkg_data(backgroundCounter, bridge_tile_data_size, bridge_tile_data);
+    set_bkg_data(backgroundCounter, world_tile_len, world_tile);
 
 }
 
