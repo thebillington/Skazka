@@ -93,7 +93,7 @@ void main() {
 
         // Check for a collision between the player and the wisps
         for (i = 0; i < 3; i++) {
-            if (rectCollision(playerData[1],playerData[2],8,8,wispsX[i],wispsY[i],8,8)) {
+            if (rectCollision(playerData[1],playerData[2],16,16,wispsX[i],wispsY[i],8,8)) {
 
                 // Move the mushroom
                 UINT8 xRand = abs((UINT8)rand());
