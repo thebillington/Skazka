@@ -10,7 +10,7 @@
   Compression          : None.
   Counter              : Tile-count as Constant.
   Tile size            : 8 x 8
-  Tiles                : 0 to 3
+  Tiles                : 0 to 0
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -27,6 +27,6 @@
 #define SquareTileBank 0
 /* Start of tile array. */
 extern unsigned char SquareTile[];
-#define SquareTileLen 4
+#define SquareTileLen 1
 
 /* End of SQUARE.H */

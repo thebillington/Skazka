@@ -88,7 +88,8 @@ void main() {
 void drawSprites2x2() {
     for (i = 0; i < 2; i++) {
         for (j = 0; j < 2; j++) {
-            move_sprite(squareLocation[(i * 2) + j], 80 + (i * 8), 80 + (j * 8));
+            move_sprite(squareLocation[(i * 2) + j], 100 + (i * 8), 100 + (j * 8));
+            move_sprite(squareLocation[(i * 2) + j] + 0x4, 100 + (i * 8), 84 + (j * 8));
         }
     }
 }
@@ -154,10 +155,27 @@ void loadSprites() {
     SPRITES_8x8;
     set_sprite_data(memoryCounter, SquareTileLen, SquareTile);
 
-    for (i = 0; i < SquareTileLen; i++) {
+    for (i = 0; i < 4; i++) {
         set_sprite_tile(squareLocation[i], memoryCounter);
-        memoryCounter++;
+        // memoryCounter++;
     }
+
+    for (i = 0; i < 4; i++) {
+        set_sprite_tile(squareLocation[i] + 0x4, memoryCounter);
+        // memoryCounter++;
+    }
+
+    // for (i = 0; i < SquareTileLen; i++) {
+    //     set_sprite_tile(squareLocation[i], memoryCounter);
+    //     memoryCounter++;
+    // }
+
+    // SPRITES_8x8;
+
+    // for (i = 0; i < SquareTileLen; i++) {
+    //     set_sprite_tile(squareLocation[i] + 0x4, memoryCounter - 0x4);
+    //     memoryCounter++;
+    // }
 
 }
 
