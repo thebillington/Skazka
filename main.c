@@ -35,6 +35,8 @@ void moveWisps(UINT8 x, UINT8 y);
 UINT8 rectCollision(INT8 x1, INT8 y1, INT8 w1, INT8 h1, INT8 x2, INT8 y2, INT8 w2, INT8 h2);
 UINT8 abs(INT8 x);
 void log(char* m, UINT8 data);
+void clearBackground();
+void loadDungeon();
 
 // Set the base location of the sprites and backgrounds
 unsigned char memoryCounter = 0x1A;
@@ -93,20 +95,45 @@ UINT8 state = 1;
 
 void main() {
 
+    // Load everything
+    clearBackground();
 	DISPLAY_ON;
-
 	SHOW_BKG;
-
-    // Load the sprites
     loadSprites();
 
+    // IMAGE OF HOME
 	initWin();
+    displayMessage(0, 6);
+    // IMAGE OF CHILD
+	initWin();
+    displayMessage(6, 1);
 
-    // Draw the default background
-    drawBackground(baba_background);
+    // Stepmother silhouette
+    initWin();
+    displayMessage(7, 4);
+
+    loadDungeon();
+
+    clearBackground();
+    // Stepmother silhouette
+    initWin();
+    displayMessage(11, 1);
+    displayMessage(12,4);
+
+    loadDungeon();
+
+}
+
+// Function to run the dungeon
+void loadDungeon() {
+
+    // Set the wisp count to 3
+    UINT8 wispCount = 3;
+
+    SHOW_SPRITES;
 
     // Game loop
-    while(1) {
+    while(wispCount) {
 
         // Call player movement
         playerMovement();
@@ -123,7 +150,7 @@ void main() {
                 wispsX[i] = 8 + (xRand % 152);
                 wispsY[i] = 16 + (yRand % 136);
 
-                displayMessage(0, 6);
+                wispCount--;
 
             }
         }
@@ -131,11 +158,21 @@ void main() {
         // Draw each sprite to the correct location
         drawSprites();
 
-        // Render the sprites
-        SHOW_SPRITES;
-
         // Sleep to keep steady (ish) FPS
         delay(FPS);
+    }
+
+    HIDE_SPRITES;
+}
+
+
+// Function to clear the background
+void clearBackground() {
+
+    for (i = 0; i < 20; i++) {
+        for (j = 0; j < 18; j++) {
+            set_bkg_tiles(i, j, 1, 1, 0);
+        }
     }
 
 }

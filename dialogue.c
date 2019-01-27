@@ -4,6 +4,8 @@
 #include "assets/alpha.c" // Sprite sheet with ASCII characters
 #include "assets/frame.c"
 
+#include "narrative.c"
+
 // Constants
 #define ASCII_START 0x20
 
@@ -25,8 +27,6 @@ void initWin() {
 	set_win_tiles(0, 0, 20, 4, frame_map_data);
 
 }
-
-char* lines[] = { "ACCORDING TO ALL", "KNOWN LAWS OF", "AVIATION, THERE", "IS NO WAY A BEE", "SHOULD BE ABLE TO", "FLY." };
 
 void displayMessage(UINT8 openingLine, UINT8 numberOfLines) {
 
