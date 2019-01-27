@@ -1,6 +1,5 @@
 #include <gb/gb.h>
 #include <rand.h>
-#include <stdio.h>
 
 #include "dialogue.c"
 
@@ -402,11 +401,4 @@ UINT8 abs(INT8 x) {
         return x;
     }
     return -x;
-}
-
-// Create a procedure to output a log message
-void log(char* m, UINT8 data) {
-
-    printf("%s%d\n",m,(UWORD)data);
-
 }
