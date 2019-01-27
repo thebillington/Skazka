@@ -110,7 +110,12 @@ void main() {
                 wispsX[i] = 8 + (xRand % 152);
                 wispsY[i] = 16 + (yRand % 136);
 
-                displayMessage(0, 6);
+				if (makeDecision(0, 6)) {
+					displayMessage(7, 1);
+				}
+				else {
+					displayMessage(6, 1);
+				}
 
             }
         }
@@ -124,6 +129,17 @@ void main() {
         // Sleep to keep steady (ish) FPS
         delay(FPS);
     }
+
+}
+
+// Function to clear the background
+void clearBackground() {
+
+	for (i = 0; i < 20; i++) {
+		for (j = 0; j < 18; j++) {
+			set_bkg_tiles(i, j, 1, 1, 0);
+		}
+	}
 
 }
 
