@@ -26,7 +26,7 @@
 /* Bank of tiles. */
 #define BabaYagaRightTilesBank 0
 /* Start of tile array. */
-extern unsigned char BabaYagaRightTiles[];
+extern const unsigned char BabaYagaRightTiles[];
 #define BabaYagaRightTilesLen 8
 
 /* End of BABAYAGARIGHT.H */

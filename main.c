@@ -5,11 +5,24 @@
 
 // Include all of the sprites
 #include "assets/mushroom.c"
-#include "assets/bridge.c"
 #include "assets/child.c"
 #include "assets/BabaYagaLeft.c"
 #include "assets/BabaYagaRight.c"
+
+// include all the story backgrounds
+#include "assets/title_screen.c"
+#include "assets/babayaga_background.c"
+
+// include dungeon background
 #include "assets/world.c"
+
+
+// Enums
+typedef enum {
+    dungeon,
+    title_screen,
+    baba_background
+} backgrounds;
 
 // Prototypes
 void loadBabayaga();
@@ -17,8 +30,7 @@ void babayagaMovement();
 void playerMovement();
 void drawSprites();
 void loadSprites();
-void drawBackground();
-void loadBackgrounds();
+void drawBackground(backgrounds b);
 void moveWisps(UINT8 x, UINT8 y);
 UINT8 rectCollision(INT8 x1, INT8 y1, INT8 w1, INT8 h1, INT8 x2, INT8 y2, INT8 w2, INT8 h2);
 UINT8 abs(INT8 x);
@@ -26,7 +38,8 @@ void log(char* m, UINT8 data);
 
 // Set the base location of the sprites and backgrounds
 unsigned char memoryCounter = 0x1A;
-unsigned char backgroundCounter = 0x80;
+unsigned char backgroundCounter = 0x00;
+unsigned char dungeonCounter = 0x80;
 
 // Set the fps
 UINT8 FPS = 16; // 60 FPS
@@ -86,11 +99,11 @@ void main() {
 
     // Load the sprites
     loadSprites();
-    loadBackgrounds();
+
 	initWin();
 
     // Draw the default background
-    drawBackground();
+    drawBackground(baba_background);
 
     // Game loop
     while(1) {
@@ -352,36 +365,28 @@ void loadSprites() {
 }
 
 // Procedure to draw the background 
-void drawBackground() {
+void drawBackground(backgrounds b) {
 
-    // Hide the background
+     // Hide the background
     HIDE_BKG;
 
-    // Check the background we want to show
-    if (state == 1) {
-
-        // Set the background to the world map
-        set_bkg_tiles(0x00, 0x00, world_data_width, world_data_height, world_data);
-
+    switch (b) {
+        case dungeon:
+            set_bkg_data(dungeonCounter, world_tile_len, world_tile);
+            set_bkg_tiles(0x00, 0x00, world_data_width, world_data_height, world_data);
+            break;
+        case title_screen:
+            set_bkg_data(backgroundCounter, titlescreen_tile_count, titlescreen_tile_data);
+            set_bkg_tiles(0x00, 0x00, titlescreen_tile_map_width, titlescreen_tile_map_height, titlescreen_map_data);
+            break;
+        case baba_background:
+            set_bkg_data(backgroundCounter, baba_background_tile_count, baba_background_tile_data);
+            set_bkg_tiles(0x00, 0x00, baba_background_tile_map_width, baba_background_tile_map_height, baba_background_map_data);
+            break;
     }
-        
+
     // Render the background
     SHOW_BKG;
-
-}
-
-// Procedure to load the backgrounds
-void loadBackgrounds() {
-
-    // Fix the tile map to work for the given background counter
-    // for (i = 0; i <= 256; i++) {
-    //     world_data[i] += backgroundCounter;
-    // }
-
-    // Create the bridge background
-    DISPLAY_ON;
-    set_bkg_data(backgroundCounter, world_tile_len, world_tile);
-
 }
 
 // Create a function to check for rect collision
