@@ -27,7 +27,7 @@ void log(char* m, UINT8 data);
 
 // Set the base location of the sprites and backgrounds
 unsigned char memoryCounter = 0x1A;
-unsigned char backgroundCounter = 0x00;
+unsigned char backgroundCounter = 0x80;
 
 // Set the fps
 UINT8 FPS = 16; // 60 FPS
