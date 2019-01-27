@@ -63,8 +63,8 @@ const UINT8 spriteCount = 2;
 UINT8 playerData[3] = {0, 40, 56};
 
 // Create data structure to hold the sprite data
-UINT8 wispsX[3] = {232, 229, 24};
-UINT8 wispsY[3] = {32, 220, 210};
+UINT8 wispsX[3] = {0, 0, 0};
+UINT8 wispsY[3] = {0, 0, 0};
 
 // Store BabaYaga data
 UINT8 babayagaX = 152;
@@ -140,15 +140,17 @@ void loadDungeon() {
     UINT8 wispCount = 3;
 
     // generate wisp locations
-    wispsX[0] = rand() % (247 + 1 - 128) + 8;
-    wispsY[0] = rand() % (128 + 1 - 16) + 16;
-    wispsX[1] = rand() % (247 + 1 - 128) + 128;
-    wispsY[1] = rand() % (255 + 1 - 120) + 120;
-    wispsX[2] = rand() % (120 + 1 - 8) + 8;
-    wispsY[2] = rand() % (255 + 1 - 200) + 200;
+    wispsX[0] = 191;
+    wispsY[0] = 64;
 
-    babayagaX = 255;
-    babayagaY = 255;
+    wispsX[1] = 191;
+    wispsY[1] = 191;
+
+    wispsX[2] = 64;
+    wispsY[2] = 191;
+
+    babayagaX = 191;
+    babayagaY = 141;
 
     playerData[1] = 72;
     playerData[2] = 72;
