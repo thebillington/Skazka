@@ -4,7 +4,7 @@
 #include "dialogue.c"
 
 // Include all of the sprites
-#include "assets/mushroom.c"
+#include "assets/wisp.c"
 #include "assets/child.c"
 #include "assets/BabaYagaLeft.c"
 #include "assets/BabaYagaRight.c"
@@ -52,7 +52,7 @@ UINT8 FPS = 16; // 60 FPS
 
 // Store the location of each sprite
 UINT8 ballLocation = 0;
-UINT8 mushroomLocation[3] = {1, 2, 3};
+UINT8 wispLocation[3] = {1, 2, 3};
 UINT8 childLocation[4] = {4, 5, 6, 7};
 UINT8 babayagaLocation[8] = {12, 13, 14, 15, 16, 17, 18, 19};
 
@@ -360,7 +360,7 @@ void drawSprites() {
     for (i = 0; i < 3; i++) {
 
         // Render the sprite (move it to the correct location to be rendered)
-        move_sprite(mushroomLocation[i], wispsX[i], wispsY[i]);
+        move_sprite(wispLocation[i], wispsX[i], wispsY[i]);
 
     }
 
@@ -384,11 +384,11 @@ void loadSprites() {
 
     // Create all of the wisp sprites
     SPRITES_8x8;
-    set_sprite_data(memoryCounter, mushroomLen, mushroom);
+    set_sprite_data(memoryCounter, wispTileLen, wispTile);
     for (i = 0; i < 3; i++) {
-        set_sprite_tile(mushroomLocation[i], memoryCounter);
+        set_sprite_tile(wispLocation[i], memoryCounter);
     }
-    memoryCounter+=mushroomLen;
+    memoryCounter+=wispTileLen;
 
     // Load the child
     SPRITES_8x8;

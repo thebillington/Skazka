@@ -1,8 +1,8 @@
 /*
 
- MUSHROOM.H
+ WISP.C
 
- Include File.
+ Tile Source File.
 
  Info:
   Form                 : All tiles as one unit.
@@ -22,11 +22,13 @@
 
 */
 
+#include "wisp.h"
 
-/* Bank of tiles. */
-#define mushroomBank 0
 /* Start of tile array. */
-extern const unsigned char mushroom[];
-#define mushroomLen 1
+unsigned char wispTile[] =
+{
+  0x00,0x00,0x3C,0x42,0x66,0x18,0x5A,0x3C,
+  0x5A,0x3C,0x66,0x18,0x3C,0x42,0x00,0x00
+};
 
-/* End of MUSHROOM.H */
+/* End of WISP.C */

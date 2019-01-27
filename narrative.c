@@ -34,4 +34,5 @@ char* lines[] = {
     "NOW YOU ARE",
     "MORE LOST THAN",
     "EVER..."
+    "FOOTPRINTS"
 };
