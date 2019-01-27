@@ -8,9 +8,11 @@
 extern void clearBackground();
 
 #include "narrative.c"
+#include "credits.c"
 
 // Constants
 #define ASCII_START 0x20
+#define CLEAR "                  "
 
 // Macros
 
@@ -32,11 +34,10 @@ void initWin() {
 }
 void displayMessage(UINT8 openingLine, UINT8 numberOfLines) {
 
-	char* clear = "                  "; // 18 spaces
 	UINT8 i;
 
-	PRINT(1, clear);
-	PRINT(2, clear);
+	PRINT(1, CLEAR);
+	PRINT(2, CLEAR);
 
 	SHOW_WIN;
 
@@ -47,8 +48,8 @@ void displayMessage(UINT8 openingLine, UINT8 numberOfLines) {
 		waitpad(J_A);
 		waitpadup();
 
-		PRINT(1, clear);
-		PRINT(2, clear);
+		PRINT(1, CLEAR);
+		PRINT(2, CLEAR);
 
 		PRINT(1, lines[i]);
 
@@ -99,10 +100,30 @@ UINT8 makeDecision(UINT8 openingLine, UINT8 dummy) {
 	
 	HIDE_WIN;
 	HIDE_SPRITES;
-	BGP_REG = 0xE4U;
+
 
 	// Bring back the sprites and the background here
 
 	return decision;
+
+}
+
+void rollCreds() {
+	
+	UINT8 i;
+
+	BGP_REG = 0x1BU;
+
+	SHOW_WIN;
+
+	for (i = 0; i < LEN(credits); i += 2) {
+		PRINT(1, CLEAR);
+		PRINT(2, CLEAR);
+		PRINT(1, credits[i]);
+		PRINT(2, credits[i + 1]);
+		delay(1500);
+	}
+
+	BGP_REG = 0xE4U;
 
 }
