@@ -32,7 +32,7 @@ void initWin() {
 	set_win_tiles(0, 0, 20, 4, frame_map_data);
 
 }
-void displayMessage(UINT8 openingLine, UINT8 numberOfLines) {
+void displayMessage(UINT16 openingLine, UINT16 numberOfLines) {
 
 	UINT8 i;
 
@@ -40,6 +40,7 @@ void displayMessage(UINT8 openingLine, UINT8 numberOfLines) {
 	PRINT(2, CLEAR);
 
 	SHOW_WIN;
+	HIDE_SPRITES;
 
 	for (i = openingLine; i < openingLine + numberOfLines; i++) {
 
@@ -55,11 +56,12 @@ void displayMessage(UINT8 openingLine, UINT8 numberOfLines) {
 
 	}
 
+	SHOW_SPRITES;
 	HIDE_WIN;
 
 }
 
-UINT8 makeDecision(UINT8 openingLine, UINT8 dummy) {
+UINT8 makeDecision(UINT16 openingLine, UINT16 dummy) {
 	
 	UINT8 i;
 	UINT8 decision = 0;
@@ -97,9 +99,11 @@ UINT8 makeDecision(UINT8 openingLine, UINT8 dummy) {
 		}
 	}
 	waitpadup();
+	move_sprite(20, 0, 0);
 	
 	HIDE_WIN;
 	HIDE_SPRITES;
+	BGP_REG = 0xE4U;
 
 
 	// Bring back the sprites and the background here

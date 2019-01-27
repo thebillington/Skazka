@@ -2,7 +2,6 @@
 #include <rand.h>
 
 #include "dialogue.c"
-#include "credits.c"
 
 // Include all of the sprites
 #include "assets/wisp.c"
@@ -44,6 +43,7 @@ void log(char* m, UINT8 data);
 void clearBackground();
 void loadDungeon();
 void speak(backgrounds b, UINT8 start, UINT8 len, UINT8 d);
+void footsteps();
 
 // Set the base location of the sprites and backgrounds
 unsigned char memoryCounter = 0x1A;
@@ -65,11 +65,11 @@ UINT8 babayagaLocation[8] = {12, 13, 14, 15, 16, 17, 18, 19};
 const UINT8 spriteCount = 2;
 
 // Store the player data
-UINT8 playerData[3] = {0, 5, 88};
+UINT8 playerData[3] = {0, 40, 56};
 
 // Create data structure to hold the sprite data
-UINT8 wispsX[3] = {60, 75, 90};
-UINT8 wispsY[3] = {60, 75, 90};
+UINT8 wispsX[3] = {0, 0, 0};
+UINT8 wispsY[3] = {0, 0, 0};
 
 // Store BabaYaga data
 UINT8 babayagaX = 152;
@@ -88,7 +88,7 @@ UINT8 j;
 
 // Store the horizontal and vertical screen scroll
 UINT8 xScroll = 5;
-UINT8 yScroll = 16;
+UINT8 yScroll = 64;
 
 // Store the max scroll allowed of the screen
 const UINT8 xScrollMax = 12 * 8;
@@ -99,65 +99,114 @@ UINT8 firstWisp = 1;
 
 // State whether Babayaga moved last turn or not
 UINT8 babayagaMoved = 0;
+UINT8 wispsMoved = 0;
 
-// Store the current state
-UINT8 state = 1;
+// seed the psudo-random number generator
+fixed seed;
 
 void main() {
-
     // Load everything
     clearBackground();
 	DISPLAY_ON;
 	SHOW_BKG;
-	initWin();
-	
-	rollCreds();
-	//while (1);
 	
 	loadSprites();
 
-    // Title screen
-    drawBackground(title_screen);
-	while (!(joypad() & J_START || joypad() & J_A)) {
-		if (joypad() & J_SELECT) {
-			
-		}
-	}
+    // Menu loop
+    while(1) {
 
-    // // Introduction dialogue
-    clearBackground();
-	initWin();
-    displayMessage(0, 6);
-    speak(maincharacter,6,1,2);
-    speak(stepmother,7,4,2);
-    speak(maincharacter,11,1,1);
-    speak(stepmother,12,3,1);
-    speak(maincharacter,15,1,1);
-    speak(maincharacter,16,4,1);
-    speak(stepmother,20,3,1);
-    speak(maincharacter,23,1,1);
-    speak(maincharacter,24,1,1);
-    clearBackground();
-	initWin();
-    displayMessage(25, 11);
+        // Title screen
+        drawBackground(title_screen);
 
-    // Load the first dungeon
-    drawBackground(dungeon);
-    delay(1000);
-    displayMessage(36,4);
-    delay(1000);
-    displayMessage(40,4);
-    loadDungeon();
+        // Check for key presses
+        while (!(joypad() & J_START || joypad() & J_A)) {
+            if (joypad() & J_SELECT) {
+                clearBackground();
+                initWin();
+                rollCreds();
+                HIDE_WIN;
 
-    // Footsteps decision
-	initWin();
-    if (makeDecision(80, 2)) {
-        drawBackground(woodman);
+                // Title screen
+                drawBackground(title_screen);
+            }
+        }
+
+        // // Introduction dialogue
+        clearBackground();
+        initWin();
+        displayMessage(0, 6);
+        speak(maincharacter,6,1,2);
+        speak(stepmother,7,4,2);
+        speak(maincharacter,11,1,1);
+        speak(stepmother,12,3,1);
+        speak(maincharacter,15,1,1);
+        speak(maincharacter,16,4,1);
+        speak(stepmother,20,3,1);
+        speak(maincharacter,23,1,1);
+        speak(maincharacter,24,1,1);
         delay(1000);
-    }
-    else {
-    	drawBackground(baba_background);
+        clearBackground();
+        initWin();
+        displayMessage(25, 11);
+
+        // Load the first dungeon
+        drawBackground(dungeon);
         delay(1000);
+        displayMessage(36,4);
+        delay(1000);
+        displayMessage(40,4);
+        loadDungeon();
+
+        // Footsteps decision
+        scroll_bkg(-xScroll + 5, -yScroll);
+        initWin();
+        delay(1000);
+        if (makeDecision(80, 2)) {
+            clearBackground();
+            initWin();
+            displayMessage(82, 4);
+            speak(maincharacter,86,2,1);
+            delay(1000);
+            clearBackground();
+            initWin();
+            displayMessage(88, 3);
+            speak(maincharacter,91,1,1);
+            delay(2000);
+            speak(baba_background,92,1,2);
+            speak(maincharacter,93,2,2);
+            speak(baba_background,95,4,2);
+            delay(1000);
+            clearBackground();
+            initWin();
+            displayMessage(99,5);
+            delay(2000);
+            clearBackground();
+            initWin();
+            displayMessage(104, 1);
+        }
+        else {
+            clearBackground();
+            initWin();
+            displayMessage(105, 2);
+            delay(1000);
+            if(makeDecision(107,2)) {
+                clearBackground();
+                initWin();
+                displayMessage(109, 22);
+                speak(woodman,131,3,2);
+                speak(maincharacter,134,1,1);
+                speak(woodman,135,5,1);
+            }
+            else {
+                drawBackground(baba_background);
+                delay(5000);
+            }
+        }
+
+        clearBackground();
+        initWin();
+        rollCreds();
+        HIDE_WIN;
     }
 
 }
@@ -177,7 +226,29 @@ void loadDungeon() {
     // Set the wisp count to 3
     UINT8 wispCount = 3;
 
+    // generate wisp locations
+    wispsX[0] = 191;
+    wispsY[0] = 64;
+
+    wispsX[1] = 191;
+    wispsY[1] = 191;
+
+    wispsX[2] = 64;
+    wispsY[2] = 191;
+
+    babayagaX = 191;
+    babayagaY = 141;
+
+    playerData[1] = 72;
+    playerData[2] = 72;
+    
+    xScroll = 5;
+    yScroll = 64;
+    scroll_bkg(0,64);
+
     SHOW_SPRITES;
+
+    drawBackground(dungeon);
 
     // Game loop
     while(wispCount) {
@@ -210,6 +281,16 @@ void loadDungeon() {
                 wispCount--;
 
             }
+        }
+
+        // Check whether the wisps should move
+        if (!wispsMoved) {
+            // Move the wisps
+            moveWisps(1,2);
+            wispsMoved = 5;
+        }
+        else {
+            wispsMoved--;
         }
 
         // Draw each sprite to the correct location
@@ -337,7 +418,7 @@ void playerMovement() {
     // Check for button presses and move the player
     if (joypad() & J_RIGHT) {
         playerData[1] += playerSpeed;
-        if (playerData[1] > 155) {
+        if (playerData[1] > 123) {
             // Check whether the screen should scroll
             if (xScroll < xScrollMax) {
                 babayagaX-=playerSpeed;
@@ -345,12 +426,12 @@ void playerMovement() {
                 scroll_bkg(playerSpeed,0);
                 xScroll++;
             }
-            playerData[1] = 155;
+            playerData[1] = 123;
         }
     }
     if (joypad() & J_LEFT) {
         playerData[1] -= playerSpeed;
-        if (playerData[1] < 5) {
+        if (playerData[1] < 37) {
             // Check whether the screen should scroll
             if (xScroll > 5) {
                 babayagaX+=playerSpeed;
@@ -358,12 +439,12 @@ void playerMovement() {
                 scroll_bkg(-playerSpeed,0);
                 xScroll--;
             }
-            playerData[1] = 5;
+            playerData[1] = 37;
         }
     }
     if (joypad() & J_UP) {
         playerData[2] -= playerSpeed;
-        if (playerData[2] < 16) {
+        if (playerData[2] < 48) {
             // Check whether the screen should scroll
             if (yScroll > 16) {
                 babayagaY+=playerSpeed;
@@ -371,12 +452,12 @@ void playerMovement() {
                 scroll_bkg(0,-playerSpeed);
                 yScroll--;
             }
-            playerData[2] = 16;
+            playerData[2] = 48;
         }
     }
     if (joypad() & J_DOWN) {
         playerData[2] += playerSpeed;
-        if (playerData[2] > 144) {
+        if (playerData[2] > 112) {
             // Check whether the screen should scroll
             if (yScroll < yScrollMax) {
                 babayagaY-=playerSpeed;
@@ -384,7 +465,7 @@ void playerMovement() {
                 scroll_bkg(0,playerSpeed);
                 yScroll++;
             }
-            playerData[2] = 144;
+            playerData[2] = 112;
         }
     }
 }
