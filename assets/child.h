@@ -26,7 +26,7 @@
 /* Bank of tiles. */
 #define childTilesBank 0
 /* Start of tile array. */
-extern unsigned char childTiles[];
+extern const unsigned char childTiles[];
 #define childTilesLen 4
 
 /* End of child.H */

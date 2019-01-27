@@ -25,8 +25,8 @@
 #define world_tile_bank 0
 #define world_tile_len 46
 
-extern unsigned char world_tile[];
+extern const unsigned char world_tile[];
 
-extern unsigned char world_data[];
+extern const unsigned char world_data[];
 
 /* End of WORLD.H */

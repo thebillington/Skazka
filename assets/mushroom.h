@@ -26,7 +26,7 @@
 /* Bank of tiles. */
 #define mushroomBank 0
 /* Start of tile array. */
-extern unsigned char mushroom[];
+extern const unsigned char mushroom[];
 #define mushroomLen 1
 
 /* End of MUSHROOM.H */
