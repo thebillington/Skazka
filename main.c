@@ -13,17 +13,20 @@
 #include "assets/title_screen.c"
 #include "assets/babayaga_background.c"
 #include "assets/main_character.c"
+#include "assets/woodman.c"
+#include "assets/stepmother.c"
 
 // include dungeon background
 #include "assets/world.c"
-
 
 // Enums
 typedef enum {
     dungeon,
     title_screen,
     baba_background,
-    maincharacter
+    maincharacter,
+    woodman,
+    stepmother
 } backgrounds;
 
 // Prototypes
@@ -39,6 +42,7 @@ UINT8 abs(INT8 x);
 void log(char* m, UINT8 data);
 void clearBackground();
 void loadDungeon();
+void speak(backgrounds b, UINT8 start, UINT8 len, UINT8 d);
 
 // Set the base location of the sprites and backgrounds
 unsigned char memoryCounter = 0x1A;
@@ -107,30 +111,35 @@ void main() {
     drawBackground(title_screen);
     waitpad(J_START);
 
-    // IMAGE OF HOME
+    // Introduction dialogue
     clearBackground();
 	initWin();
     displayMessage(0, 6);
-    drawBackground(maincharacter);
-    delay(2000);
+    speak(maincharacter,6,1,2);
+    speak(stepmother,7,4,2);
+    speak(maincharacter,11,1,1);
+    speak(stepmother,12,3,1);
+    speak(maincharacter,15,1,1);
+    speak(maincharacter,16,4,1);
+    speak(stepmother,20,3,1);
+    speak(maincharacter,23,1,1);
+    speak(maincharacter,24,1,1);
     clearBackground();
 	initWin();
-    displayMessage(6, 1);
+    displayMessage(25,11);
 
-    // Stepmother silhouette
-    initWin();
-    displayMessage(7, 4);
-
+    // Load the first dungeon
     loadDungeon();
 
+}
+
+// Create a function to allow characters to speak
+void speak(backgrounds b, UINT8 start, UINT8 len, UINT8 d) {
+    drawBackground(b);
+    delay(d * 1000);
     clearBackground();
-    // Stepmother silhouette
-    initWin();
-    displayMessage(11, 1);
-    displayMessage(12,4);
-
-    loadDungeon();
-
+	initWin();
+    displayMessage(start, len);
 }
 
 // Function to run the dungeon
@@ -140,6 +149,8 @@ void loadDungeon() {
     UINT8 wispCount = 3;
 
     SHOW_SPRITES;
+
+    drawBackground(dungeon);
 
     // Game loop
     while(wispCount) {
@@ -180,10 +191,9 @@ void clearBackground() {
 
     for (i = 0; i < 20; i++) {
         for (j = 0; j < 18; j++) {
-            set_bkg_tiles(i, j, 1, 1, 0);
+            set_bkg_tiles(i, j, 1, 1, 7);
         }
     }
-
 }
 
 void loadBabayaga() {
@@ -432,6 +442,14 @@ void drawBackground(backgrounds b) {
         case maincharacter:
             set_bkg_data(backgroundCounter, maincharacter_tile_count, maincharacter_tile_data);
             set_bkg_tiles(0x00, 0x00, maincharacter_tile_map_width, maincharacter_tile_map_height, maincharacter_map_data);
+            break;
+        case woodman:
+            set_bkg_data(backgroundCounter, woodman_tile_count, woodman_tile_data);
+            set_bkg_tiles(0x00, 0x00, woodman_tile_map_width, woodman_tile_map_height, woodman_map_data);
+            break;
+        case stepmother:
+            set_bkg_data(backgroundCounter, stepmother_tile_count, stepmother_tile_data);
+            set_bkg_tiles(0x00, 0x00, stepmother_tile_map_width, stepmother_tile_map_height, stepmother_map_data);
             break;
     }
 
