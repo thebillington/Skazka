@@ -109,14 +109,27 @@ void main() {
     clearBackground();
 	DISPLAY_ON;
 	SHOW_BKG;
-    loadSprites();
+	
+	loadSprites();
 
     // Menu loop
     while(1) {
 
         // Title screen
         drawBackground(title_screen);
-        while(!(joypad() & J_START || joypad() & J_A));
+
+        // Check for key presses
+        while (!(joypad() & J_START || joypad() & J_A)) {
+            if (joypad() & J_SELECT) {
+                clearBackground();
+                initWin();
+                rollCreds();
+                HIDE_WIN;
+
+                // Title screen
+                drawBackground(title_screen);
+            }
+        }
 
         // // Introduction dialogue
         clearBackground();
@@ -189,6 +202,11 @@ void main() {
                 delay(5000);
             }
         }
+
+        clearBackground();
+        initWin();
+        rollCreds();
+        HIDE_WIN;
     }
 
 }
