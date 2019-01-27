@@ -4,7 +4,7 @@
 #include "assets/alpha.c" // Sprite sheet with ASCII characters
 
 // Constants
-#define ASCII_START 0x30
+#define ASCII_START 0x20
 
 // Macros
 
@@ -18,7 +18,7 @@ void initWin() {
 	move_win(7, 112);
 
 	// Load ASCII tiles into window layer
-	set_win_data(ASCII_START, 48, alpha);
+	set_win_data(ASCII_START, 64, alpha);
 
 }
 

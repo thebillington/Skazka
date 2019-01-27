@@ -82,11 +82,10 @@ void main() {
 
 	SHOW_BKG;
 
-	initWin();
-
     // Load the sprites
     loadSprites();
     loadBackgrounds();
+	initWin();
 
     // Draw the default background
     drawBackground();
