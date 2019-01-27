@@ -112,7 +112,7 @@ void main() {
 
     // Title screen
     drawBackground(title_screen);
-    waitpad(J_START);
+    while(!(joypad() & J_START || joypad() & J_A));
 
     // // Introduction dialogue
     clearBackground();
