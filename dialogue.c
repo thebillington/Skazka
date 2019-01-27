@@ -30,7 +30,7 @@ void initWin() {
 	set_win_tiles(0, 0, 20, 4, frame_map_data);
 
 }
-void displayMessage(UINT8 openingLine, UINT8 numberOfLines) {
+void displayMessage(UINT16 openingLine, UINT16 numberOfLines) {
 
 	char* clear = "                  "; // 18 spaces
 	UINT8 i;
@@ -58,7 +58,7 @@ void displayMessage(UINT8 openingLine, UINT8 numberOfLines) {
 
 }
 
-UINT8 makeDecision(UINT8 openingLine, UINT8 dummy) {
+UINT8 makeDecision(UINT16 openingLine, UINT16 dummy) {
 	
 	UINT8 i;
 	UINT8 decision = 0;

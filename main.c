@@ -43,6 +43,7 @@ void log(char* m, UINT8 data);
 void clearBackground();
 void loadDungeon();
 void speak(backgrounds b, UINT8 start, UINT8 len, UINT8 d);
+void footsteps();
 
 // Set the base location of the sprites and backgrounds
 unsigned char memoryCounter = 0x1A;
@@ -110,44 +111,83 @@ void main() {
 	SHOW_BKG;
     loadSprites();
 
-    // Title screen
-    drawBackground(title_screen);
-    while(!(joypad() & J_START || joypad() & J_A));
+    // Menu loop
+    while(1) {
 
-    // // Introduction dialogue
-    clearBackground();
-	initWin();
-    displayMessage(0, 6);
-    speak(maincharacter,6,1,2);
-    speak(stepmother,7,4,2);
-    speak(maincharacter,11,1,1);
-    speak(stepmother,12,3,1);
-    speak(maincharacter,15,1,1);
-    speak(maincharacter,16,4,1);
-    speak(stepmother,20,3,1);
-    speak(maincharacter,23,1,1);
-    speak(maincharacter,24,1,1);
-    clearBackground();
-	initWin();
-    displayMessage(25, 11);
+        // // Title screen
+        // drawBackground(title_screen);
+        // while(!(joypad() & J_START || joypad() & J_A));
 
-    // Load the first dungeon
-    drawBackground(dungeon);
-    delay(1000);
-    displayMessage(36,4);
-    delay(1000);
-    displayMessage(40,4);
-    loadDungeon();
+        // // // Introduction dialogue
+        // clearBackground();
+        // initWin();
+        // displayMessage(0, 6);
+        // speak(maincharacter,6,1,2);
+        // speak(stepmother,7,4,2);
+        // speak(maincharacter,11,1,1);
+        // speak(stepmother,12,3,1);
+        // speak(maincharacter,15,1,1);
+        // speak(maincharacter,16,4,1);
+        // speak(stepmother,20,3,1);
+        // speak(maincharacter,23,1,1);
+        // speak(maincharacter,24,1,1);
+        // delay(1000);
+        // clearBackground();
+        // initWin();
+        // displayMessage(25, 11);
 
-    // Footsteps decision
-	initWin();
-    if (makeDecision(80, 2)) {
-        drawBackground(woodman);
+        // // Load the first dungeon
+        // drawBackground(dungeon);
+        // delay(1000);
+        // displayMessage(36,4);
+        // delay(1000);
+        // displayMessage(40,4);
+        // loadDungeon();
+
+        // Footsteps decision
+        initWin();
         delay(1000);
-    }
-    else {
-    	drawBackground(baba_background);
-        delay(1000);
+        if (makeDecision(80, 2)) {
+            clearBackground();
+            initWin();
+            displayMessage(82, 4);
+            speak(maincharacter,86,2,1);
+            delay(1000);
+            clearBackground();
+            initWin();
+            displayMessage(88, 3);
+            speak(maincharacter,91,1,1);
+            delay(2000);
+            speak(baba_background,92,1,2);
+            speak(maincharacter,93,2,2);
+            speak(baba_background,95,4,2);
+            delay(1000);
+            clearBackground();
+            initWin();
+            displayMessage(99,5);
+            delay(2000);
+            clearBackground();
+            initWin();
+            displayMessage(104, 1);
+        }
+        else {
+            clearBackground();
+            initWin();
+            displayMessage(105, 2);
+            delay(1000);
+            if(makeDecision(107,2)) {
+                clearBackground();
+                initWin();
+                displayMessage(109, 22);
+                speak(woodman,131,3,2);
+                speak(maincharacter,134,1,1);
+                speak(woodman,135,5,1);
+            }
+            else {
+                drawBackground(baba_background);
+                delay(5000);
+            }
+        }
     }
 
 }
