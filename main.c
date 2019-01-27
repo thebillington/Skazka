@@ -12,6 +12,7 @@
 // include all the story backgrounds
 #include "assets/title_screen.c"
 #include "assets/babayaga_background.c"
+#include "assets/main_character.c"
 
 // include dungeon background
 #include "assets/world.c"
@@ -21,7 +22,8 @@
 typedef enum {
     dungeon,
     title_screen,
-    baba_background
+    baba_background,
+    maincharacter
 } backgrounds;
 
 // Prototypes
@@ -101,10 +103,17 @@ void main() {
 	SHOW_BKG;
     loadSprites();
 
+    // Title screen
+    drawBackground(title_screen);
+    waitpad(J_START);
+
     // IMAGE OF HOME
+    clearBackground();
 	initWin();
     displayMessage(0, 6);
-    // IMAGE OF CHILD
+    drawBackground(maincharacter);
+    delay(2000);
+    clearBackground();
 	initWin();
     displayMessage(6, 1);
 
@@ -413,12 +422,16 @@ void drawBackground(backgrounds b) {
             set_bkg_tiles(0x00, 0x00, world_data_width, world_data_height, world_data);
             break;
         case title_screen:
-            set_bkg_data(backgroundCounter, titlescreen_tile_count, titlescreen_tile_data);
-            set_bkg_tiles(0x00, 0x00, titlescreen_tile_map_width, titlescreen_tile_map_height, titlescreen_map_data);
+            set_bkg_data(backgroundCounter, title_screen_main_tile_count, title_screen_main_tile_data);
+            set_bkg_tiles(0x00, 0x00, title_screen_main_tile_map_width, title_screen_main_tile_map_height, title_screen_main_map_data);
             break;
         case baba_background:
             set_bkg_data(backgroundCounter, baba_background_tile_count, baba_background_tile_data);
             set_bkg_tiles(0x00, 0x00, baba_background_tile_map_width, baba_background_tile_map_height, baba_background_map_data);
+            break;
+        case maincharacter:
+            set_bkg_data(backgroundCounter, maincharacter_tile_count, maincharacter_tile_data);
+            set_bkg_tiles(0x00, 0x00, maincharacter_tile_map_width, maincharacter_tile_map_height, maincharacter_map_data);
             break;
     }
 
