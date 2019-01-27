@@ -58,20 +58,22 @@ void displayMessage(UINT8 openingLine, UINT8 numberOfLines) {
 
 }
 
-UINT8 makeDecision(UINT8 openingLine, UINT8 numberOfLines) {
+UINT8 makeDecision(UINT8 openingLine, UINT8 dummy) {
 	
 	UINT8 decision = 0;
 
-	BGP_REG = 0x1BU;
+	dummy = dummy; // Avoid compiler warnings
 
+	BGP_REG = 0x1BU;
 	
 	clearBackground();
 	
-	displayMessage(openingLine, numberOfLines);
 	SHOW_WIN;
+	PRINT(1, lines[openingLine]);
+	PRINT(2, lines[openingLine + 1]);
 
 	// All overworld sprites should be removed here
-
+	SHOW_SPRITES;
 	set_bkg_tiles(5, 8, 10, 1, "YES     NO");
 	set_sprite_data(0x2F, 1, arrow);
 	set_sprite_tile(20, 0x2F);
@@ -92,6 +94,7 @@ UINT8 makeDecision(UINT8 openingLine, UINT8 numberOfLines) {
 	waitpadup();
 	
 	HIDE_WIN;
+	HIDE_SPRITES;
 	BGP_REG = 0xE4U;
 
 	// Bring back the sprites and the background here

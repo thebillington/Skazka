@@ -93,6 +93,9 @@ UINT8 yScroll = 16;
 const UINT8 xScrollMax = 12 * 8;
 const UINT8 yScrollMax = 14 * 8;
 
+// Store a boolean to check whether this is the first wisp of the game
+UINT8 firstWisp = 1;
+
 // State whether Babayaga moved last turn or not
 UINT8 babayagaMoved = 0;
 
@@ -111,7 +114,7 @@ void main() {
     drawBackground(title_screen);
     waitpad(J_START);
 
-    // Introduction dialogue
+    // // Introduction dialogue
     clearBackground();
 	initWin();
     displayMessage(0, 6);
@@ -126,10 +129,26 @@ void main() {
     speak(maincharacter,24,1,1);
     clearBackground();
 	initWin();
-    displayMessage(25,11);
+    displayMessage(25, 11);
 
     // Load the first dungeon
+    drawBackground(dungeon);
+    delay(1000);
+    displayMessage(36,4);
+    delay(1000);
+    displayMessage(40,4);
     loadDungeon();
+
+    // Footsteps decision
+	initWin();
+    if (makeDecision(80, 2)) {
+        drawBackground(woodman);
+        delay(1000);
+    }
+    else {
+    	drawBackground(baba_background);
+        delay(1000);
+    }
 
 }
 
@@ -150,8 +169,6 @@ void loadDungeon() {
 
     SHOW_SPRITES;
 
-    drawBackground(dungeon);
-
     // Game loop
     while(wispCount) {
 
@@ -163,19 +180,23 @@ void loadDungeon() {
         // Check for a collision between the player and the wisps
         for (i = 0; i < 3; i++) {
             if (rectCollision(playerData[1],playerData[2],16,16,wispsX[i],wispsY[i],8,8)) {
+                
+                // Check if this is the first wisp
+                if(firstWisp) {
+                    if (wispCount == 3) {
+                        displayMessage(44,15);
+                    }
+                    else if (wispCount == 2) {
+                        displayMessage(59,12);
+                    }
+                    else if(wispCount == 1) {
+                        displayMessage(71,9);
+                        firstWisp = 0;
+                    }
+                }
+                wispsX[i] = 0;
+                wispsY[i] = 0;
 
-                // Move the wisp
-                UINT8 xRand = abs((UINT8)rand());
-                UINT8 yRand = abs((UINT8)rand());
-                wispsX[i] = 8 + (xRand % 152);
-                wispsY[i] = 16 + (yRand % 136);
-
-				if (makeDecision(0, 6)) {
-					displayMessage(7, 1);
-				}
-				else {
-					displayMessage(6, 1);
-				}
                 wispCount--;
 
             }
