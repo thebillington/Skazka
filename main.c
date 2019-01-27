@@ -27,7 +27,7 @@ void log(char* m, UINT8 data);
 
 // Set the base location of the sprites and backgrounds
 unsigned char memoryCounter = 0x1A;
-unsigned char backgroundCounter = 0x00;
+unsigned char backgroundCounter = 0x80;
 
 // Set the fps
 UINT8 FPS = 16; // 60 FPS
@@ -57,7 +57,7 @@ UINT8 babayagaDirection = 1;
 
 // Store the speed of the player (allows for a grid based instead of pixel based movement if set to 8)
 UINT8 playerSpeed = 1;
-UINT8 babayagaSpeed = 8;
+UINT8 babayagaSpeed = 14;
 
 UINT8 babayagaMem;
 
@@ -85,11 +85,10 @@ void main() {
 
 	SHOW_BKG;
 
-	initWin();
-
     // Load the sprites
     loadSprites();
     loadBackgrounds();
+	initWin();
 
     // Draw the default background
     drawBackground();
@@ -141,7 +140,7 @@ void babayagaMovement() {
     // Check whether Babayaga should moved
     if (babayagaMoved == 0) {
 
-        babayagaMoved = 20;
+        babayagaMoved = 30;
 
         if (babayagaX > playerData[1]) {
             babayagaX -= babayagaSpeed;
@@ -166,6 +165,61 @@ void babayagaMovement() {
             babayagaX = 8;
             
         }
+    }
+    else if(babayagaMoved == 10) {
+        babayagaX += 1;
+        babayagaMoved--;
+
+    }
+    else if(babayagaMoved == 9) {
+        babayagaX -=2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 8) {
+        babayagaX += 1;
+        babayagaY += 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 7) {
+        babayagaX -= 1;
+        babayagaY -= 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 6) {
+        babayagaX += 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 5) {
+        babayagaX -= 1;
+        babayagaY += 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 4) {
+        babayagaY += 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 3) {
+        babayagaX -= 2;
+        babayagaY -= 1;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 2) {
+        babayagaX += 1;
+        babayagaY += 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 1) {
+        babayagaY += 2;
+        babayagaMoved--;
+        
     }
     else {
         babayagaMoved--;

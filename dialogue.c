@@ -2,9 +2,10 @@
 #include <string.h>
 
 #include "assets/alpha.c" // Sprite sheet with ASCII characters
+#include "assets/frame.c"
 
 // Constants
-#define ASCII_START 0x30
+#define ASCII_START 0x20
 
 // Macros
 
@@ -17,8 +18,11 @@ void initWin() {
 
 	move_win(7, 112);
 
-	// Load ASCII tiles into window layer
-	set_win_data(ASCII_START, 48, alpha);
+	// Load ASCII tiles and box frame into window layer
+	set_win_data(0x10, 8, frame_tile_data);
+	set_win_data(ASCII_START, 64, alpha);
+
+	set_win_tiles(0, 0, 20, 4, frame_map_data);
 
 }
 
