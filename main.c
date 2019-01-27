@@ -2,6 +2,7 @@
 #include <rand.h>
 
 #include "dialogue.c"
+#include "credits.c"
 
 // Include all of the sprites
 #include "assets/wisp.c"
@@ -108,11 +109,20 @@ void main() {
     clearBackground();
 	DISPLAY_ON;
 	SHOW_BKG;
-    loadSprites();
+	initWin();
+	
+	rollCreds();
+	//while (1);
+	
+	loadSprites();
 
     // Title screen
     drawBackground(title_screen);
-    while(!(joypad() & J_START || joypad() & J_A));
+	while (!(joypad() & J_START || joypad() & J_A)) {
+		if (joypad() & J_SELECT) {
+			
+		}
+	}
 
     // // Introduction dialogue
     clearBackground();
