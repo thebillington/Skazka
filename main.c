@@ -4,12 +4,30 @@
 #include "dialogue.c"
 
 // Include all of the sprites
-#include "assets/mushroom.c"
-#include "assets/bridge.c"
+#include "assets/wisp.c"
 #include "assets/child.c"
 #include "assets/BabaYagaLeft.c"
 #include "assets/BabaYagaRight.c"
+
+// include all the story backgrounds
+#include "assets/title_screen.c"
+#include "assets/babayaga_background.c"
+#include "assets/main_character.c"
+#include "assets/woodman.c"
+#include "assets/stepmother.c"
+
+// include dungeon background
 #include "assets/world.c"
+
+// Enums
+typedef enum {
+    dungeon,
+    title_screen,
+    baba_background,
+    maincharacter,
+    woodman,
+    stepmother
+} backgrounds;
 
 // Prototypes
 void loadBabayaga();
@@ -17,16 +35,19 @@ void babayagaMovement();
 void playerMovement();
 void drawSprites();
 void loadSprites();
-void drawBackground();
-void loadBackgrounds();
+void drawBackground(backgrounds b);
 void moveWisps(UINT8 x, UINT8 y);
 UINT8 rectCollision(INT8 x1, INT8 y1, INT8 w1, INT8 h1, INT8 x2, INT8 y2, INT8 w2, INT8 h2);
 UINT8 abs(INT8 x);
 void log(char* m, UINT8 data);
+void clearBackground();
+void loadDungeon();
+void speak(backgrounds b, UINT8 start, UINT8 len, UINT8 d);
 
 // Set the base location of the sprites and backgrounds
 unsigned char memoryCounter = 0x1A;
-unsigned char backgroundCounter = 0x80;
+unsigned char backgroundCounter = 0x00;
+unsigned char dungeonCounter = 0x80;
 
 // Set the fps
 UINT8 FPS = 16; // 60 FPS
@@ -35,7 +56,7 @@ UINT8 FPS = 16; // 60 FPS
 
 // Store the location of each sprite
 UINT8 ballLocation = 0;
-UINT8 mushroomLocation[3] = {1, 2, 3};
+UINT8 wispLocation[3] = {1, 2, 3};
 UINT8 childLocation[4] = {4, 5, 6, 7};
 UINT8 babayagaLocation[8] = {12, 13, 14, 15, 16, 17, 18, 19};
 
@@ -80,20 +101,59 @@ UINT8 state = 1;
 
 void main() {
 
+    // Load everything
+    clearBackground();
 	DISPLAY_ON;
-
 	SHOW_BKG;
-
-    // Load the sprites
     loadSprites();
-    loadBackgrounds();
-	initWin();
 
-    // Draw the default background
-    drawBackground();
+    // Title screen
+    drawBackground(title_screen);
+    waitpad(J_START);
+
+    // Introduction dialogue
+    clearBackground();
+	initWin();
+    displayMessage(0, 6);
+    speak(maincharacter,6,1,2);
+    speak(stepmother,7,4,2);
+    speak(maincharacter,11,1,1);
+    speak(stepmother,12,3,1);
+    speak(maincharacter,15,1,1);
+    speak(maincharacter,16,4,1);
+    speak(stepmother,20,3,1);
+    speak(maincharacter,23,1,1);
+    speak(maincharacter,24,1,1);
+    clearBackground();
+	initWin();
+    displayMessage(25,11);
+
+    // Load the first dungeon
+    loadDungeon();
+
+}
+
+// Create a function to allow characters to speak
+void speak(backgrounds b, UINT8 start, UINT8 len, UINT8 d) {
+    drawBackground(b);
+    delay(d * 1000);
+    clearBackground();
+	initWin();
+    displayMessage(start, len);
+}
+
+// Function to run the dungeon
+void loadDungeon() {
+
+    // Set the wisp count to 3
+    UINT8 wispCount = 3;
+
+    SHOW_SPRITES;
+
+    drawBackground(dungeon);
 
     // Game loop
-    while(1) {
+    while(wispCount) {
 
         // Call player movement
         playerMovement();
@@ -116,6 +176,7 @@ void main() {
 				else {
 					displayMessage(6, 1);
 				}
+                wispCount--;
 
             }
         }
@@ -123,24 +184,22 @@ void main() {
         // Draw each sprite to the correct location
         drawSprites();
 
-        // Render the sprites
-        SHOW_SPRITES;
-
         // Sleep to keep steady (ish) FPS
         delay(FPS);
     }
 
+    HIDE_SPRITES;
 }
+
 
 // Function to clear the background
 void clearBackground() {
 
-	for (i = 0; i < 20; i++) {
-		for (j = 0; j < 18; j++) {
-			set_bkg_tiles(i, j, 1, 1, 0);
-		}
-	}
-
+    for (i = 0; i < 20; i++) {
+        for (j = 0; j < 18; j++) {
+            set_bkg_tiles(i, j, 1, 1, 7);
+        }
+    }
 }
 
 void loadBabayaga() {
@@ -317,7 +376,7 @@ void drawSprites() {
     for (i = 0; i < 3; i++) {
 
         // Render the sprite (move it to the correct location to be rendered)
-        move_sprite(mushroomLocation[i], wispsX[i], wispsY[i]);
+        move_sprite(wispLocation[i], wispsX[i], wispsY[i]);
 
     }
 
@@ -341,11 +400,11 @@ void loadSprites() {
 
     // Create all of the wisp sprites
     SPRITES_8x8;
-    set_sprite_data(memoryCounter, mushroomLen, mushroom);
+    set_sprite_data(memoryCounter, wispTileLen, wispTile);
     for (i = 0; i < 3; i++) {
-        set_sprite_tile(mushroomLocation[i], memoryCounter);
+        set_sprite_tile(wispLocation[i], memoryCounter);
     }
-    memoryCounter+=mushroomLen;
+    memoryCounter+=wispTileLen;
 
     // Load the child
     SPRITES_8x8;
@@ -368,36 +427,40 @@ void loadSprites() {
 }
 
 // Procedure to draw the background 
-void drawBackground() {
+void drawBackground(backgrounds b) {
 
-    // Hide the background
+     // Hide the background
     HIDE_BKG;
 
-    // Check the background we want to show
-    if (state == 1) {
-
-        // Set the background to the world map
-        set_bkg_tiles(0x00, 0x00, world_data_width, world_data_height, world_data);
-
+    switch (b) {
+        case dungeon:
+            set_bkg_data(dungeonCounter, world_tile_len, world_tile);
+            set_bkg_tiles(0x00, 0x00, world_data_width, world_data_height, world_data);
+            break;
+        case title_screen:
+            set_bkg_data(backgroundCounter, title_screen_main_tile_count, title_screen_main_tile_data);
+            set_bkg_tiles(0x00, 0x00, title_screen_main_tile_map_width, title_screen_main_tile_map_height, title_screen_main_map_data);
+            break;
+        case baba_background:
+            set_bkg_data(backgroundCounter, baba_background_tile_count, baba_background_tile_data);
+            set_bkg_tiles(0x00, 0x00, baba_background_tile_map_width, baba_background_tile_map_height, baba_background_map_data);
+            break;
+        case maincharacter:
+            set_bkg_data(backgroundCounter, maincharacter_tile_count, maincharacter_tile_data);
+            set_bkg_tiles(0x00, 0x00, maincharacter_tile_map_width, maincharacter_tile_map_height, maincharacter_map_data);
+            break;
+        case woodman:
+            set_bkg_data(backgroundCounter, woodman_tile_count, woodman_tile_data);
+            set_bkg_tiles(0x00, 0x00, woodman_tile_map_width, woodman_tile_map_height, woodman_map_data);
+            break;
+        case stepmother:
+            set_bkg_data(backgroundCounter, stepmother_tile_count, stepmother_tile_data);
+            set_bkg_tiles(0x00, 0x00, stepmother_tile_map_width, stepmother_tile_map_height, stepmother_map_data);
+            break;
     }
-        
+
     // Render the background
     SHOW_BKG;
-
-}
-
-// Procedure to load the backgrounds
-void loadBackgrounds() {
-
-    // Fix the tile map to work for the given background counter
-    // for (i = 0; i <= 256; i++) {
-    //     world_data[i] += backgroundCounter;
-    // }
-
-    // Create the bridge background
-    DISPLAY_ON;
-    set_bkg_data(backgroundCounter, world_tile_len, world_tile);
-
 }
 
 // Create a function to check for rect collision

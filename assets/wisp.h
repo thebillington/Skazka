@@ -1,6 +1,6 @@
 /*
 
- MUSHROOM.H
+ WISP.H
 
  Include File.
 
@@ -24,9 +24,9 @@
 
 
 /* Bank of tiles. */
-#define mushroomBank 0
+#define wispTileBank 0
 /* Start of tile array. */
-extern unsigned char mushroom[];
-#define mushroomLen 1
+extern unsigned char wispTile[];
+#define wispTileLen 1
 
-/* End of MUSHROOM.H */
+/* End of WISP.H */
