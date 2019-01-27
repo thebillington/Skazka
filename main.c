@@ -13,17 +13,20 @@
 #include "assets/title_screen.c"
 #include "assets/babayaga_background.c"
 #include "assets/main_character.c"
+#include "assets/woodman.c"
+#include "assets/stepmother.c"
 
 // include dungeon background
 #include "assets/world.c"
-
 
 // Enums
 typedef enum {
     dungeon,
     title_screen,
     baba_background,
-    maincharacter
+    maincharacter,
+    woodman,
+    stepmother
 } backgrounds;
 
 // Prototypes
@@ -39,6 +42,8 @@ UINT8 abs(INT8 x);
 void log(char* m, UINT8 data);
 void clearBackground();
 void loadDungeon();
+void speak(backgrounds b, UINT8 start, UINT8 len, UINT8 d);
+void footsteps();
 
 // Set the base location of the sprites and backgrounds
 unsigned char memoryCounter = 0x1A;
@@ -89,8 +94,12 @@ UINT8 yScroll = 64;
 const UINT8 xScrollMax = 12 * 8;
 const UINT8 yScrollMax = 14 * 8;
 
+// Store a boolean to check whether this is the first wisp of the game
+UINT8 firstWisp = 1;
+
 // State whether Babayaga moved last turn or not
 UINT8 babayagaMoved = 0;
+UINT8 wispsMoved = 0;
 
 // seed the psudo-random number generator
 fixed seed;
@@ -102,35 +111,95 @@ void main() {
 	SHOW_BKG;
     loadSprites();
 
-    // Title screen
-    drawBackground(title_screen);
-    waitpad(J_START);
-    seed.b.l = DIV_REG;
-    seed.b.h = DIV_REG;
-    initarand(seed.w);
+    // Menu loop
+    while(1) {
 
-    // IMAGE OF HOME
-    // clearBackground();
-	// initWin();
-    // displayMessage(0, 6);
-    // drawBackground(maincharacter);
-    // delay(2000);
-    // clearBackground();
-	// initWin();
-    // displayMessage(6, 1);
+        // Title screen
+        drawBackground(title_screen);
+        while(!(joypad() & J_START || joypad() & J_A));
 
-    // // Stepmother silhouette
-    // initWin();
-    // displayMessage(7, 4);
+        // // Introduction dialogue
+        clearBackground();
+        initWin();
+        displayMessage(0, 6);
+        speak(maincharacter,6,1,2);
+        speak(stepmother,7,4,2);
+        speak(maincharacter,11,1,1);
+        speak(stepmother,12,3,1);
+        speak(maincharacter,15,1,1);
+        speak(maincharacter,16,4,1);
+        speak(stepmother,20,3,1);
+        speak(maincharacter,23,1,1);
+        speak(maincharacter,24,1,1);
+        delay(1000);
+        clearBackground();
+        initWin();
+        displayMessage(25, 11);
 
-    loadDungeon();
+        // Load the first dungeon
+        drawBackground(dungeon);
+        delay(1000);
+        displayMessage(36,4);
+        delay(1000);
+        displayMessage(40,4);
+        loadDungeon();
 
+        // Footsteps decision
+        scroll_bkg(-xScroll + 5, -yScroll);
+        initWin();
+        delay(1000);
+        if (makeDecision(80, 2)) {
+            clearBackground();
+            initWin();
+            displayMessage(82, 4);
+            speak(maincharacter,86,2,1);
+            delay(1000);
+            clearBackground();
+            initWin();
+            displayMessage(88, 3);
+            speak(maincharacter,91,1,1);
+            delay(2000);
+            speak(baba_background,92,1,2);
+            speak(maincharacter,93,2,2);
+            speak(baba_background,95,4,2);
+            delay(1000);
+            clearBackground();
+            initWin();
+            displayMessage(99,5);
+            delay(2000);
+            clearBackground();
+            initWin();
+            displayMessage(104, 1);
+        }
+        else {
+            clearBackground();
+            initWin();
+            displayMessage(105, 2);
+            delay(1000);
+            if(makeDecision(107,2)) {
+                clearBackground();
+                initWin();
+                displayMessage(109, 22);
+                speak(woodman,131,3,2);
+                speak(maincharacter,134,1,1);
+                speak(woodman,135,5,1);
+            }
+            else {
+                drawBackground(baba_background);
+                delay(5000);
+            }
+        }
+    }
+
+}
+
+// Create a function to allow characters to speak
+void speak(backgrounds b, UINT8 start, UINT8 len, UINT8 d) {
+    drawBackground(b);
+    delay(d * 1000);
     clearBackground();
-    // Stepmother silhouette
-    initWin();
-    displayMessage(11, 1);
-    displayMessage(12,4);
-    while(1);
+	initWin();
+    displayMessage(start, len);
 }
 
 // Function to run the dungeon
@@ -174,14 +243,36 @@ void loadDungeon() {
         // Check for a collision between the player and the wisps
         for (i = 0; i < 3; i++) {
             if (rectCollision(playerData[1],playerData[2],16,16,wispsX[i],wispsY[i],8,8)) {
-
-                // Move the wisp
+                
+                // Check if this is the first wisp
+                if(firstWisp) {
+                    if (wispCount == 3) {
+                        displayMessage(44,15);
+                    }
+                    else if (wispCount == 2) {
+                        displayMessage(59,12);
+                    }
+                    else if(wispCount == 1) {
+                        displayMessage(71,9);
+                        firstWisp = 0;
+                    }
+                }
                 wispsX[i] = 0;
                 wispsY[i] = 0;
 
                 wispCount--;
 
             }
+        }
+
+        // Check whether the wisps should move
+        if (!wispsMoved) {
+            // Move the wisps
+            moveWisps(1,2);
+            wispsMoved = 5;
+        }
+        else {
+            wispsMoved--;
         }
 
         // Draw each sprite to the correct location
@@ -200,10 +291,9 @@ void clearBackground() {
 
     for (i = 0; i < 20; i++) {
         for (j = 0; j < 18; j++) {
-            set_bkg_tiles(i, j, 1, 1, 0);
+            set_bkg_tiles(i, j, 1, 1, 7);
         }
     }
-
 }
 
 void loadBabayaga() {
@@ -452,6 +542,14 @@ void drawBackground(backgrounds b) {
         case maincharacter:
             set_bkg_data(backgroundCounter, maincharacter_tile_count, maincharacter_tile_data);
             set_bkg_tiles(0x00, 0x00, maincharacter_tile_map_width, maincharacter_tile_map_height, maincharacter_map_data);
+            break;
+        case woodman:
+            set_bkg_data(backgroundCounter, woodman_tile_count, woodman_tile_data);
+            set_bkg_tiles(0x00, 0x00, woodman_tile_map_width, woodman_tile_map_height, woodman_map_data);
+            break;
+        case stepmother:
+            set_bkg_data(backgroundCounter, stepmother_tile_count, stepmother_tile_data);
+            set_bkg_tiles(0x00, 0x00, stepmother_tile_map_width, stepmother_tile_map_height, stepmother_map_data);
             break;
     }
 
