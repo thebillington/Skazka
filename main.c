@@ -170,6 +170,12 @@ void loadDungeon() {
                 wispsX[i] = 8 + (xRand % 152);
                 wispsY[i] = 16 + (yRand % 136);
 
+				if (makeDecision(0, 6)) {
+					displayMessage(7, 1);
+				}
+				else {
+					displayMessage(6, 1);
+				}
                 wispCount--;
 
             }
