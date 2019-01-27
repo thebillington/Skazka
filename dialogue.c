@@ -39,6 +39,7 @@ void displayMessage(UINT16 openingLine, UINT16 numberOfLines) {
 	PRINT(2, clear);
 
 	SHOW_WIN;
+	HIDE_SPRITES;
 
 	for (i = openingLine; i < openingLine + numberOfLines; i++) {
 
@@ -54,6 +55,7 @@ void displayMessage(UINT16 openingLine, UINT16 numberOfLines) {
 
 	}
 
+	SHOW_SPRITES;
 	HIDE_WIN;
 
 }
@@ -96,6 +98,7 @@ UINT8 makeDecision(UINT16 openingLine, UINT16 dummy) {
 		}
 	}
 	waitpadup();
+	move_sprite(20, 0, 0);
 	
 	HIDE_WIN;
 	HIDE_SPRITES;

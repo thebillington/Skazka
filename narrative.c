@@ -103,7 +103,7 @@ const char* lines[] = {
     "AND LEADS YOU",
     "DEEP INTO THE",
     "FOREST....",
-    "GAME OVER!"
+    "GAME OVER!",
     "AS YOU WALK",
     "YOU COME ACROSS",
     "A RIVER",
