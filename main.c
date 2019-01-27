@@ -57,7 +57,7 @@ UINT8 babayagaDirection = 1;
 
 // Store the speed of the player (allows for a grid based instead of pixel based movement if set to 8)
 UINT8 playerSpeed = 1;
-UINT8 babayagaSpeed = 1;
+UINT8 babayagaSpeed = 14;
 
 UINT8 babayagaMem;
 
@@ -72,6 +72,9 @@ UINT8 yScroll = 16;
 // Store the max scroll allowed of the screen
 const UINT8 xScrollMax = 12 * 8;
 const UINT8 yScrollMax = 14 * 8;
+
+// State whether Babayaga moved last turn or not
+UINT8 babayagaMoved = 0;
 
 // Store the current state
 UINT8 state = 1;
@@ -133,20 +136,93 @@ void loadBabayaga() {
 }
 
 void babayagaMovement() {
-    if (babayagaDirection) {
-        babayagaX += babayagaSpeed;
-    } else {
-        babayagaX -= babayagaSpeed;
+
+    // Check whether Babayaga should moved
+    if (babayagaMoved == 0) {
+
+        babayagaMoved = 30;
+
+        if (babayagaX > playerData[1]) {
+            babayagaX -= babayagaSpeed;
+            babayagaDirection = 0; 
+            loadBabayaga();
+        } else if (babayagaX < playerData[1]) {
+            babayagaX += babayagaSpeed;
+            babayagaDirection = 1;
+            loadBabayaga();
+        }
+
+        if (babayagaY < playerData[2]) {
+            babayagaY += babayagaSpeed;
+        } else if (babayagaY > playerData[2]) {
+            babayagaY -= babayagaSpeed;
+        }
+        
+        if (babayagaX > 248) {
+            babayagaX = 248;
+            
+        } else if (babayagaX < 8) {
+            babayagaX = 8;
+            
+        }
     }
-    
-    if (babayagaX > 152) {
-        babayagaX = 152;
-        babayagaDirection = 0; 
-        loadBabayaga();
-    } else if (babayagaX < 8) {
-        babayagaX = 8;
-        babayagaDirection = 1;
-        loadBabayaga();
+    else if(babayagaMoved == 10) {
+        babayagaX += 1;
+        babayagaMoved--;
+
+    }
+    else if(babayagaMoved == 9) {
+        babayagaX -=2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 8) {
+        babayagaX += 1;
+        babayagaY += 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 7) {
+        babayagaX -= 1;
+        babayagaY -= 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 6) {
+        babayagaX += 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 5) {
+        babayagaX -= 1;
+        babayagaY += 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 4) {
+        babayagaY += 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 3) {
+        babayagaX -= 2;
+        babayagaY -= 1;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 2) {
+        babayagaX += 1;
+        babayagaY += 2;
+        babayagaMoved--;
+        
+    }
+    else if(babayagaMoved == 1) {
+        babayagaY += 2;
+        babayagaMoved--;
+        
+    }
+    else {
+        babayagaMoved--;
     }
 }
 
