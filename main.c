@@ -298,6 +298,11 @@ void drawBackground() {
 // Procedure to load the backgrounds
 void loadBackgrounds() {
 
+    // Fix the tile map to work for the given background counter
+    // for (i = 0; i <= 256; i++) {
+    //     world_data[i] += backgroundCounter;
+    // }
+
     // Create the bridge background
     DISPLAY_ON;
     set_bkg_data(backgroundCounter, world_tile_len, world_tile);
