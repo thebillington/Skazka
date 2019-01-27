@@ -60,11 +60,11 @@ UINT8 babayagaLocation[8] = {12, 13, 14, 15, 16, 17, 18, 19};
 const UINT8 spriteCount = 2;
 
 // Store the player data
-UINT8 playerData[3] = {0, 5, 88};
+UINT8 playerData[3] = {0, 40, 56};
 
 // Create data structure to hold the sprite data
-UINT8 wispsX[3] = {60, 75, 90};
-UINT8 wispsY[3] = {60, 75, 90};
+UINT8 wispsX[3] = {232, 229, 24};
+UINT8 wispsY[3] = {32, 220, 210};
 
 // Store BabaYaga data
 UINT8 babayagaX = 152;
@@ -83,7 +83,7 @@ UINT8 j;
 
 // Store the horizontal and vertical screen scroll
 UINT8 xScroll = 5;
-UINT8 yScroll = 16;
+UINT8 yScroll = 64;
 
 // Store the max scroll allowed of the screen
 const UINT8 xScrollMax = 12 * 8;
@@ -92,11 +92,10 @@ const UINT8 yScrollMax = 14 * 8;
 // State whether Babayaga moved last turn or not
 UINT8 babayagaMoved = 0;
 
-// Store the current state
-UINT8 state = 1;
+// seed the psudo-random number generator
+fixed seed;
 
 void main() {
-
     // Load everything
     clearBackground();
 	DISPLAY_ON;
@@ -106,20 +105,23 @@ void main() {
     // Title screen
     drawBackground(title_screen);
     waitpad(J_START);
+    seed.b.l = DIV_REG;
+    seed.b.h = DIV_REG;
+    initarand(seed.w);
 
     // IMAGE OF HOME
-    clearBackground();
-	initWin();
-    displayMessage(0, 6);
-    drawBackground(maincharacter);
-    delay(2000);
-    clearBackground();
-	initWin();
-    displayMessage(6, 1);
+    // clearBackground();
+	// initWin();
+    // displayMessage(0, 6);
+    // drawBackground(maincharacter);
+    // delay(2000);
+    // clearBackground();
+	// initWin();
+    // displayMessage(6, 1);
 
-    // Stepmother silhouette
-    initWin();
-    displayMessage(7, 4);
+    // // Stepmother silhouette
+    // initWin();
+    // displayMessage(7, 4);
 
     loadDungeon();
 
@@ -128,9 +130,7 @@ void main() {
     initWin();
     displayMessage(11, 1);
     displayMessage(12,4);
-
-    loadDungeon();
-
+    while(1);
 }
 
 // Function to run the dungeon
@@ -139,7 +139,27 @@ void loadDungeon() {
     // Set the wisp count to 3
     UINT8 wispCount = 3;
 
+    // generate wisp locations
+    wispsX[0] = rand() % (247 + 1 - 128) + 8;
+    wispsY[0] = rand() % (128 + 1 - 16) + 16;
+    wispsX[1] = rand() % (247 + 1 - 128) + 128;
+    wispsY[1] = rand() % (255 + 1 - 120) + 120;
+    wispsX[2] = rand() % (120 + 1 - 8) + 8;
+    wispsY[2] = rand() % (255 + 1 - 200) + 200;
+
+    babayagaX = 255;
+    babayagaY = 255;
+
+    playerData[1] = 72;
+    playerData[2] = 72;
+    
+    xScroll = 5;
+    yScroll = 64;
+    scroll_bkg(0,64);
+
     SHOW_SPRITES;
+
+    drawBackground(dungeon);
 
     // Game loop
     while(wispCount) {
@@ -154,10 +174,8 @@ void loadDungeon() {
             if (rectCollision(playerData[1],playerData[2],16,16,wispsX[i],wispsY[i],8,8)) {
 
                 // Move the wisp
-                UINT8 xRand = abs((UINT8)rand());
-                UINT8 yRand = abs((UINT8)rand());
-                wispsX[i] = 8 + (xRand % 152);
-                wispsY[i] = 16 + (yRand % 136);
+                wispsX[i] = 0;
+                wispsY[i] = 0;
 
                 wispCount--;
 
@@ -290,7 +308,7 @@ void playerMovement() {
     // Check for button presses and move the player
     if (joypad() & J_RIGHT) {
         playerData[1] += playerSpeed;
-        if (playerData[1] > 155) {
+        if (playerData[1] > 123) {
             // Check whether the screen should scroll
             if (xScroll < xScrollMax) {
                 babayagaX-=playerSpeed;
@@ -298,12 +316,12 @@ void playerMovement() {
                 scroll_bkg(playerSpeed,0);
                 xScroll++;
             }
-            playerData[1] = 155;
+            playerData[1] = 123;
         }
     }
     if (joypad() & J_LEFT) {
         playerData[1] -= playerSpeed;
-        if (playerData[1] < 5) {
+        if (playerData[1] < 37) {
             // Check whether the screen should scroll
             if (xScroll > 5) {
                 babayagaX+=playerSpeed;
@@ -311,12 +329,12 @@ void playerMovement() {
                 scroll_bkg(-playerSpeed,0);
                 xScroll--;
             }
-            playerData[1] = 5;
+            playerData[1] = 37;
         }
     }
     if (joypad() & J_UP) {
         playerData[2] -= playerSpeed;
-        if (playerData[2] < 16) {
+        if (playerData[2] < 48) {
             // Check whether the screen should scroll
             if (yScroll > 16) {
                 babayagaY+=playerSpeed;
@@ -324,12 +342,12 @@ void playerMovement() {
                 scroll_bkg(0,-playerSpeed);
                 yScroll--;
             }
-            playerData[2] = 16;
+            playerData[2] = 48;
         }
     }
     if (joypad() & J_DOWN) {
         playerData[2] += playerSpeed;
-        if (playerData[2] > 144) {
+        if (playerData[2] > 112) {
             // Check whether the screen should scroll
             if (yScroll < yScrollMax) {
                 babayagaY-=playerSpeed;
@@ -337,7 +355,7 @@ void playerMovement() {
                 scroll_bkg(0,playerSpeed);
                 yScroll++;
             }
-            playerData[2] = 144;
+            playerData[2] = 112;
         }
     }
 }
