@@ -24,8 +24,10 @@ jobs:
       - name: Install GBDK
         run: |
           wget -q https://github.com/gbdk-2020/gbdk-2020/releases/latest/download/gbdk-linux64.tar.gz
-          tar -xzf gbdk-linux64.tar.gz
-          echo "$PWD/gbdk/bin" >> $GITHUB_PATH
+          sudo mkdir -p /opt/gbdk
+          sudo tar -xzf gbdk-linux64.tar.gz -C /opt/gbdk --strip-components=1
+          echo "GBDK_HOME=/opt/gbdk" >> $GITHUB_ENV
+          echo "/opt/gbdk/bin" >> $GITHUB_PATH
 
       - name: Build ROM
         run: ./compile.sh
